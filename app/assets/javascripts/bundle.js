@@ -52,8 +52,8 @@
 	var Route = ReactRouter.Route;
 	var hashHistory = ReactRouter.hashHistory;
 	
-	var Menu = __webpack_require__(231);
-	var SongsIndex = __webpack_require__(233);
+	var Menu = __webpack_require__(229);
+	var SongsIndex = __webpack_require__(230);
 	
 	var router = React.createElement(
 	  Router,
@@ -25871,13 +25871,11 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 229 */,
-/* 230 */,
-/* 231 */
+/* 229 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var SongsIndex = __webpack_require__(233);
+	var SongsIndex = __webpack_require__(230);
 	var YoutubeApiUtil = __webpack_require__(232);
 	
 	module.exports = React.createClass({
@@ -25891,6 +25889,10 @@
 	
 	  componentWillUnmount: function () {
 	    $(document.body).off('keydown', this.onChange);
+	  },
+	
+	  contextTypes: {
+	    router: React.PropTypes.object.isRequired
 	  },
 	
 	  onChange: function (e) {
@@ -25908,6 +25910,160 @@
 	    );
 	  }
 	});
+
+/***/ },
+/* 230 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var SongsApiUtil = __webpack_require__(231);
+	module.exports = React.createClass({
+	  displayName: 'exports',
+	
+	
+	  getInitialState: function () {
+	    return { songs: [] };
+	  },
+	
+	  componentDidMount: function () {
+	    $(document.body).on('keydown', this.onKeyDown);
+	    ApiUtil.getSongs(this.setSongs);
+	  },
+	
+	  componentWillUnmount: function () {
+	    $(document.body).off('keydown', this.onKeyDown);
+	  },
+	
+	  setSongs: function (sngs) {
+	    this.setState({ songs: sngs, index: 0 });
+	  },
+	
+	  contextTypes: {
+	    router: React.PropTypes.object.isRequired
+	  },
+	
+	  onKeyDown: function () {
+	    event.preventDefault();
+	
+	    if (e.which === 13) {
+	      var songId = this.state.songs[this.state.index].song_id;
+	      this.context.router.push("/song/" + songId);
+	    }
+	  },
+	
+	  allSongs: function () {
+	    var arr = [];
+	    var i = 0;
+	    var that = this;
+	    this.state.songs.forEach(function (song) {
+	      arr.push(React.createElement(
+	        'li',
+	        { key: song.song_id },
+	        React.createElement(
+	          'div',
+	          { className: that.state.index === i ? "selected" : null },
+	          song.name
+	        )
+	      ));
+	      i++;
+	    });
+	    return arr;
+	  },
+	
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      { className: 'songs-index' },
+	      React.createElement(
+	        'h2',
+	        null,
+	        'Songs:'
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'songs' },
+	        React.createElement(
+	          'ul',
+	          null,
+	          this.allSongs()
+	        )
+	      ),
+	      React.createElement(
+	        'h2',
+	        null,
+	        'Press ',
+	        React.createElement(
+	          'span',
+	          { className: 'key' },
+	          '↑'
+	        ),
+	        ', ',
+	        React.createElement(
+	          'span',
+	          { className: 'key' },
+	          '↓'
+	        ),
+	        ', or ',
+	        React.createElement(
+	          'span',
+	          { className: 'key' },
+	          'ENTER'
+	        ),
+	        ' to select.'
+	      )
+	    );
+	  }
+	});
+
+/***/ },
+/* 231 */
+/***/ function(module, exports) {
+
+	module.exports = {
+	  getSongs: function (callback) {
+	    $.ajax({
+	      type: 'GET',
+	      url: 'api/songs',
+	      dataType: 'json',
+	      success: function (songs) {
+	        callback(songs);
+	      },
+	      error: function () {
+	        console.log("SongsApiUtil#getSongs error");
+	      }
+	    });
+	  },
+	
+	  getSongBeats: function (songId, callback) {
+	    $.ajax({
+	      type: 'GET',
+	      url: 'api/songs/' + songId,
+	      dataType: 'json',
+	      success: function (songBeats) {
+	        callback(songBeats);
+	      },
+	      error: function () {
+	        console.log("SongsApiUtil#getSongBeats error");
+	      }
+	    });
+	  },
+	
+	  createBeat: function (beat) {
+	    $.ajax({
+	      type: 'POST',
+	      url: 'api/beats',
+	      dataType: 'json',
+	      data: { beat: beat },
+	      success: function (beat) {
+	        console.log(beat);
+	      },
+	      error: function () {
+	        console.log("SongsApiUtil#addBeat error");
+	      }
+	    });
+	  }
+	
+	};
 
 /***/ },
 /* 232 */
@@ -25946,25 +26102,6 @@
 	    }
 	  }
 	};
-
-/***/ },
-/* 233 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	
-	module.exports = React.createClass({
-	  displayName: 'exports',
-	
-	
-	  render: function () {
-	    return React.createElement(
-	      'div',
-	      null,
-	      'SONGINDEX'
-	    );
-	  }
-	});
 
 /***/ }
 /******/ ]);

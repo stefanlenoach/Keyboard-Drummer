@@ -13,6 +13,10 @@ module.exports = React.createClass({
     $(document.body).off('keydown', this.onChange);
   },
 
+  contextTypes: {
+    router: React.PropTypes.object.isRequired
+  },
+
   onChange: function (e) {
     event.preventDefault();
     if (e.which === 32) {

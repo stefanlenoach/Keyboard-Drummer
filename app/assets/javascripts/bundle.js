@@ -52,12 +52,14 @@
 	var Route = ReactRouter.Route;
 	var hashHistory = ReactRouter.hashHistory;
 	
-	var Menu = __webpack_require__(229);
+	var Menu = __webpack_require__(231);
+	var SongsIndex = __webpack_require__(233);
 	
 	var router = React.createElement(
 	  Router,
 	  { history: hashHistory },
-	  React.createElement(Route, { path: '/', component: Menu })
+	  React.createElement(Route, { path: '/', component: Menu }),
+	  React.createElement(Route, { path: '/songs', component: SongsIndex })
 	);
 	
 	$(document).on('ready', function () {
@@ -25869,7 +25871,84 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 229 */
+/* 229 */,
+/* 230 */,
+/* 231 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var SongsIndex = __webpack_require__(233);
+	var YoutubeApiUtil = __webpack_require__(232);
+	
+	module.exports = React.createClass({
+	  displayName: 'exports',
+	
+	
+	  componentDidMount: function () {
+	    $(document.body).on('keydown', this.onChange);
+	    YoutubeApiUtil.loadIframePlayer();
+	  },
+	
+	  componentWillUnmount: function () {
+	    $(document.body).off('keydown', this.onChange);
+	  },
+	
+	  onChange: function (e) {
+	    event.preventDefault();
+	    if (e.which === 32) {
+	      this.context.router.push("/songs");
+	    }
+	  },
+	
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      null,
+	      'HEEEEEEERe'
+	    );
+	  }
+	});
+
+/***/ },
+/* 232 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	module.exports = {
+	  loadIframePlayer: function () {
+	    var tag = document.createElement('script');
+	    tag.src = "https://www.youtube.com/iframe_api";
+	    var firstScriptTag = document.getElementsByTagName('script')[0];
+	    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+	  },
+	
+	  createIframe: function (youtubeId, onPlayerStateChange) {
+	    // if YT is not yet defined, return false to redirect
+	    // to TrackList
+	    if (typeof YT === "undefined") {
+	      return false;
+	    } else {
+	      return new YT.Player('song-container', {
+	        videoId: youtubeId,
+	        position: 'absolute',
+	        top: 0,
+	        left: 0,
+	        width: '100%',
+	        height: '100%',
+	        wmode: "transparent",
+	        playerVars: { 'autoplay': 0, 'controls': 0, modestBranding: 1,
+	          showinfo: 0, fs: 0, disablekb: 0, rel: 0, iv_load_policy: 3 },
+	        events: {
+	          'onStateChange': onPlayerStateChange
+	        }
+	      });
+	    }
+	  }
+	};
+
+/***/ },
+/* 233 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -25877,8 +25956,13 @@
 	module.exports = React.createClass({
 	  displayName: 'exports',
 	
+	
 	  render: function () {
-	    return React.createElement('div', null);
+	    return React.createElement(
+	      'div',
+	      null,
+	      'SONGINDEX'
+	    );
 	  }
 	});
 

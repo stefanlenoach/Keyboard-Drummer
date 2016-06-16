@@ -8,7 +8,7 @@ module.exports = React.createClass({
 
   componentDidMount: function () {
     $(document.body).on('keydown', this.onKeyDown);
-    ApiUtil.getSongs(this.setSongs);
+    SongsApiUtil.getSongs(this.setSongs);
   },
 
   componentWillUnmount: function () {
@@ -23,12 +23,11 @@ module.exports = React.createClass({
     router: React.PropTypes.object.isRequired
   },
 
-  onKeyDown: function () {
+  onKeyDown: function (event) {
     event.preventDefault();
-
-    if (e.which === 13) {
-      var songId = this.state.songs[this.state.index].song_id
-      this.context.router.push("/song/" + songId);
+    if (event.which === 13) {
+      var songId = this.state.songs[this.state.index].id
+      this.context.router.push("/songs/" + songId);
     }
   },
 

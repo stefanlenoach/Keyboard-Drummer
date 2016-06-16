@@ -8,11 +8,13 @@ var hashHistory = ReactRouter.hashHistory;
 
 var Menu = require('./components/Menu')
 var SongsIndex = require('./components/SongsIndex')
+var SongItem = require('./components/SongItem')
 
 var router = (
   <Router history={hashHistory}>
     <Route path="/" component={Menu} />
     <Route path="/songs" component={SongsIndex} />
+    <Route path='/songs/:id' component={SongItem}/>
   </Router>
 );
 

@@ -54,12 +54,14 @@
 	
 	var Menu = __webpack_require__(229);
 	var SongsIndex = __webpack_require__(230);
+	var SongItem = __webpack_require__(233);
 	
 	var router = React.createElement(
 	  Router,
 	  { history: hashHistory },
 	  React.createElement(Route, { path: '/', component: Menu }),
-	  React.createElement(Route, { path: '/songs', component: SongsIndex })
+	  React.createElement(Route, { path: '/songs', component: SongsIndex }),
+	  React.createElement(Route, { path: '/songs/:id', component: SongItem })
 	);
 	
 	$(document).on('ready', function () {
@@ -25927,7 +25929,7 @@
 	
 	  componentDidMount: function () {
 	    $(document.body).on('keydown', this.onKeyDown);
-	    ApiUtil.getSongs(this.setSongs);
+	    SongsApiUtil.getSongs(this.setSongs);
 	  },
 	
 	  componentWillUnmount: function () {
@@ -25942,12 +25944,11 @@
 	    router: React.PropTypes.object.isRequired
 	  },
 	
-	  onKeyDown: function () {
+	  onKeyDown: function (event) {
 	    event.preventDefault();
-	
-	    if (e.which === 13) {
-	      var songId = this.state.songs[this.state.index].song_id;
-	      this.context.router.push("/song/" + songId);
+	    if (event.which === 13) {
+	      var songId = this.state.songs[this.state.index].id;
+	      this.context.router.push("/songs/" + songId);
 	    }
 	  },
 	
@@ -26102,6 +26103,27 @@
 	    }
 	  }
 	};
+
+/***/ },
+/* 233 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var SongsApiUtil = __webpack_require__(231);
+	
+	module.exports = React.createClass({
+	  displayName: 'exports',
+	
+	
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      null,
+	      'SONG'
+	    );
+	  }
+	
+	});
 
 /***/ }
 /******/ ]);

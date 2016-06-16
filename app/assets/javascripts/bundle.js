@@ -25919,6 +25919,8 @@
 
 	var React = __webpack_require__(1);
 	var SongsApiUtil = __webpack_require__(231);
+	var YoutubeApiUtil = __webpack_require__(232);
+	
 	module.exports = React.createClass({
 	  displayName: 'exports',
 	
@@ -25930,6 +25932,7 @@
 	  componentDidMount: function () {
 	    $(document.body).on('keydown', this.onKeyDown);
 	    SongsApiUtil.getSongs(this.setSongs);
+	    YoutubeApiUtil.loadIframePlayer();
 	  },
 	
 	  componentWillUnmount: function () {
@@ -25988,29 +25991,6 @@
 	          null,
 	          this.allSongs()
 	        )
-	      ),
-	      React.createElement(
-	        'h2',
-	        null,
-	        'Press ',
-	        React.createElement(
-	          'span',
-	          { className: 'key' },
-	          '↑'
-	        ),
-	        ', ',
-	        React.createElement(
-	          'span',
-	          { className: 'key' },
-	          '↓'
-	        ),
-	        ', or ',
-	        React.createElement(
-	          'span',
-	          { className: 'key' },
-	          'ENTER'
-	        ),
-	        ' to select.'
 	      )
 	    );
 	  }
@@ -26093,8 +26073,16 @@
 	        width: '100%',
 	        height: '100%',
 	        wmode: "transparent",
-	        playerVars: { 'autoplay': 0, 'controls': 0, modestBranding: 1,
-	          showinfo: 0, fs: 0, disablekb: 0, rel: 0, iv_load_policy: 3 },
+	        playerVars: {
+	          'autoplay': 0,
+	          'controls': 0,
+	          modestBranding: 1,
+	          showinfo: 0,
+	          fs: 0,
+	          disablekb: 0,
+	          rel: 0,
+	          iv_load_policy: 3
+	        },
 	        events: {
 	          'onStateChange': onPlayerStateChange
 	        }
@@ -26117,12 +26105,7 @@
 	
 	  getInitialState: function () {
 	    return {
-	      localTime: 0,
-	      ytTime: 0,
-	      nextBeat: 0,
-	      score: 0,
-	      playing: false,
-	      lastStop: 0
+	      playing: false
 	    };
 	  },
 	
@@ -26147,32 +26130,30 @@
 	  keyDown: function (e) {
 	    e.preventDefault();
 	    if (e.which === 32) {
-	      this.togglePlay();
+	      this.play();
 	    }
 	  },
 	
-	  togglePlay: function () {
+	  play: function () {
 	    if (this.state.playing === false) {
+	      debugger;
 	      this.player.playVideo();
-	      this.intervalVar = setInterval(this.playerTimeInterval, 10);
-	      this.setState({ playing: true, localTime: this.state.ytTime });
 	    } else {
 	      this.player.pauseVideo();
-	      clearInterval(this.intervalVar);
-	      this.setState({ playing: false, lastStop: this.state.localTime });
 	    }
 	  },
 	
 	  checkVideoOver: function () {
 	    if (this.player.getPlayerState() === 0) {
-	      clearInterval(this.intervalVar);
-	      this.context.router.push("/track-list");
+	      this.context.router.push("/SongsIndex");
 	    }
 	  },
 	
 	  // no animation on video start in sliding-letter mode
 	  checkVideoStart: function () {
-	    if (this.player.getPlayerState() === 1) {}
+	    if (this.player.getPlayerState() === 1) {
+	      console.log("video start");
+	    }
 	  },
 	
 	  onPlayerStateChange: function () {

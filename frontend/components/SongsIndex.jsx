@@ -1,5 +1,7 @@
 var React = require('react')
 var SongsApiUtil = require('../util/songs_api_util');
+var YoutubeApiUtil = require('../util/youtube_api_util')
+
 module.exports = React.createClass({
 
   getInitialState: function () {
@@ -9,6 +11,7 @@ module.exports = React.createClass({
   componentDidMount: function () {
     $(document.body).on('keydown', this.onKeyDown);
     SongsApiUtil.getSongs(this.setSongs);
+    YoutubeApiUtil.loadIframePlayer();
   },
 
   componentWillUnmount: function () {
@@ -58,9 +61,7 @@ module.exports = React.createClass({
             {this.allSongs()}
           </ul>
         </div>
-        <h2>
-          Press <span className="key">↑</span>, <span className="key">↓</span>, or <span className="key">ENTER</span> to select.
-        </h2>
+
       </div>
     )
   }

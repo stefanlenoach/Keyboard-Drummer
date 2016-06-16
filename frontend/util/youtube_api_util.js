@@ -21,8 +21,16 @@ module.exports = {
         width: '100%',
         height: '100%',
         wmode: "transparent",
-        playerVars: {'autoplay': 0, 'controls': 0, modestBranding: 1,
-                      showinfo: 0, fs: 0, disablekb: 0, rel:0, iv_load_policy: 3 },
+        playerVars: {
+          'autoplay': 0,
+          'controls': 0,
+          modestBranding: 1,
+          showinfo: 0,
+          fs: 0,
+          disablekb: 0,
+          rel:0,
+          iv_load_policy: 3
+        },
         events: {
           'onStateChange': onPlayerStateChange
         }

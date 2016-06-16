@@ -13,13 +13,13 @@ module.exports = {
     });
   },
 
-  getSongBeats: function (songId, callback) {
+  getSong: function (songId, callback) {
     $.ajax({
       type: 'GET',
       url: 'api/songs/' + songId,
       dataType: 'json',
-      success: function (songBeats) {
-        callback(songBeats);
+      success: function (song) {
+        callback(song);
       },
       error: function () {
         console.log("SongsApiUtil#getSongBeats error");

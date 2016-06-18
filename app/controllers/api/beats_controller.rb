@@ -10,6 +10,6 @@ class Api::BeatsController < ApplicationController
 
   private
   def beat_params
-    params.require(:beat).permit(:time, :song_id)
+    params.require(:beat).permit(:time, :song_id, :key)
   end
 end

@@ -26103,66 +26103,123 @@
 	module.exports = React.createClass({
 	  displayName: 'exports',
 	
+	
 	  getInitialState: function () {
 	    return {
-	      playing: false
+	      localTime: 0,
+	      ytTime: 0,
+	      nextBeat: 0,
+	      score: 0,
+	      playing: false,
+	      lastStop: 0
 	    };
 	  },
 	
-	  contextTypes: {
-	    router: React.PropTypes.object.isRequired
-	  },
-	
 	  componentDidMount: function () {
-	    YoutubeApiUtil.loadIframePlayer();
-	    $(document.body).on('keydown', this.keyDown);
-	    SongsApiUtil.getSong(this.props.params.id, this.setup);
+	    $(document.body).on('keydown', this.keyDownHandler);
+	    SongsApiUtil.getSong(this.props.params.id, this.saveSongData);
 	  },
 	
 	  componentWillUnmount: function () {
-	    $(document.body).off('keydown', this.keyDown);
+	    $(document.body).off('keydown', this.keyDownHandler);
 	  },
 	
-	  setup: function (song) {
-	    this.player = YoutubeApiUtil.createIframe(song.youtube_id, this.onPlayerStateChange);
+	  saveSongData: function (song) {
+	    this.beats = song.beats;
+	    this.songId = song.id;
+	    this.youtubeId = song.youtube_id;
+	    this.enableIframeApi();
 	  },
 	
-	  keyDown: function (e) {
+	  keyDownHandler: function (e) {
+	    e.stopPropagation();
 	    e.preventDefault();
 	    if (e.which === 32) {
-	      this.play();
+	      if (this.getPlayer().getPlayerState() !== 1) {
+	        this.getPlayer().playVideo();
+	        this.renderBeats();
+	        this.startTime = window.Date.now();
+	      } else {
+	        this.getPlayer().pauseVideo();
+	      }
+	    } else if (e.which >= 65 || e.which <= 90) {
+	      var hitTime = window.Date.now() - this.startTime;
 	    }
 	  },
 	
-	  play: function () {
-	    if (this.state.playing === false) {
+	  renderBeats: function () {
+	    var allBeats = this.beats;
+	    var i = 0;
+	    var j = 30;
+	    var that = this;
+	    this.loadedBeats = this.beats.slice(i, j);
+	    loadBeats = function () {
 	      debugger;
-	      this.player.playVideo();
-	    } else {
-	      this.player.pauseVideo();
-	    }
+	      if (this.loadedBeats.length <= 20) {
+	        i = j;
+	        j += 10;
+	        this.loadedBeats = that.beats.slice(i, j);
+	      }
+	    };
+	    setTimeout(loadBeats(), 250);
 	  },
 	
-	  checkVideoOver: function () {
-	    if (this.player.getPlayerState() === 0) {
-	      this.context.router.push("/SongsIndex");
-	    }
-	  },
+	  enableIframeApi: function () {
+	    var tag = document.createElement('script');
+	    tag.src = "https://www.youtube.com/iframe_api";
+	    var firstScriptTag = document.getElementsByTagName('script')[0];
+	    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 	
-	  // no animation on video start in sliding-letter mode
-	  checkVideoStart: function () {
-	    if (this.player.getPlayerState() === 1) {
-	      console.log("video start");
-	    }
-	  },
+	    var player;
+	    var youtubeId = this.youtubeId;
+	    onYouTubeIframeAPIReady = function () {
+	      player = new YT.Player('song-container', {
+	        position: 'absolute',
+	        top: 0,
+	        left: 0,
+	        width: '100%',
+	        height: '100%',
+	        videoId: youtubeId,
+	        wmode: "transparent"
+	      });
+	    };
+	    onYouTubeIframeAPIReady();
 	
-	  onPlayerStateChange: function () {
-	    this.checkVideoOver();
-	    this.checkVideoStart();
+	    this.getPlayer = function () {
+	      return player;
+	    };
 	  },
 	
 	  render: function () {
-	    return React.createElement('div', null);
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'div',
+	        { className: 'game-layer', id: 'game-layer' },
+	        React.createElement(
+	          'ul',
+	          { className: 'group beat-letters' },
+	          React.createElement('div', { className: 'selected-before' }),
+	          React.createElement('div', { className: 'selected-after' })
+	        ),
+	        React.createElement(
+	          'section',
+	          { className: 'scoreboard' },
+	          React.createElement(
+	            'h1',
+	            null,
+	            'Score'
+	          ),
+	          React.createElement(
+	            'h2',
+	            null,
+	            this.state.score
+	          )
+	        )
+	      ),
+	      React.createElement('container', { className: 'song-container', id: 'song-container' })
+	    );
 	  }
 	});
 

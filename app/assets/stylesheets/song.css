@@ -1,0 +1,195 @@
+.song-container {
+  position: fixed;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.game-layer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  color: #eee;
+  text-align: center;
+  background: rgba(0, 0, 0, .6);
+}
+
+.game-layer .beat-letters {
+  margin-top: 20%;
+  display: inline-block;
+  font-weight: 600;
+  white-space: nowrap;
+  width: 960px;
+  height: 131px;
+  text-align: left;
+  position: relative;
+  /* letter scores rendered via absolute-position arrows */
+}
+
+.beat-letters li {
+  font-size: 56px;
+  line-height: 112px;
+  text-align: center;
+  width: 70px;
+  height: 120px;
+  position: absolute;
+  -webkit-animation: letter-slide 2.6s 1 linear; /* Safari 4+ */
+  -moz-animation: letter-slide 2.6s 1 linear; /* Fx 5+ */
+  animation: letter-slide 2.6s 1 linear;
+  opacity: 0.0;
+}
+
+.beat-letters li.pause-msg {
+  width: 960px;
+  font-size: 20px;
+  height: 131px;
+  line-height: 131px;
+  color: #fff;
+  background: #000;
+  animation: none;
+  -webkit-animation: none; /* Safari 4+ */
+  -moz-animation: none; /* Fx 5+ */
+  opacity: 1.0;
+}
+
+.beat-letters li:after {
+  content: attr(data-score);
+  color: #fff;
+  position: absolute;
+  width: 100%;
+  top: 110%;
+  left: 0;
+  font-size: 24px;
+}
+
+
+.beat-letters .selected-before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-35px);
+  border: 35px solid #fff;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  border-top: none;
+}
+
+.beat-letters .selected-before,
+.beat-letters .selected-after {
+  transition: width, margin-left;
+  transition-duration: 2s;
+  transition-timing-function: linear;
+}
+
+.beat-letters .selected-before.highlight {
+  border-color: #268bd2;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  border-top: none;
+}
+
+.beat-letters .selected-after.highlight {
+  border-color: #dc322f;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  border-bottom: none;
+}
+
+
+.beat-letters .selected-before:before,
+.beat-letters .selected-after:before {
+  content: "";
+  position: absolute;
+  border: none;
+  border-bottom: 1px solid #fff;
+  width: 960px;
+  margin-top: 34px;
+  margin-left: -480px;
+  transition: inherit;
+  transition-duration: inherit;
+}
+
+.beat-letters .selected-before.new-beat:before,
+.beat-letters .selected-before.new-beat:after,
+.beat-letters .selected-after.new-beat:after,
+.beat-letters .selected-after.new-beat:before {
+  width: 0px;
+  margin-left: 0px;
+  transition: width, margin-left;
+  transition-duration: 0s;
+}
+
+.beat-letters .selected-after:before  {
+  margin-top: -35px;
+}
+
+.beat-letters .selected-after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-35px);
+  width: 0;
+  border: 35px solid #fff;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  border-bottom: none;
+}
+
+.scoreboard {
+  margin: 10% auto 0;
+  color: #fff;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.scoreboard h2 {
+  font-size: 40px;
+}
+
+/* KEYFRAM ANIMATIONS */
+@-webkit-keyframes letter-slide {
+  0%   { right: 0; opacity: 0.0;}
+  5%   { opacity: 1.0; }
+  48%  { color: #ccc; font-size: 56px; }
+  50%  { color: #268bd2; font-size: 88px; }
+  59%  { color: #268bd2; font-size: 88px; }
+  62%  { color: #ccc; font-size: 56px; }
+  95%  { opacity: 1.0; }
+  100% { right: 90%; opacity: 0.0; }
+}
+@-moz-keyframes letter-slide {
+  0%   { right: 0; opacity: 0.0;}
+  5%   { opacity: 1.0; }
+  48%  { color: #ccc; font-size: 56px; }
+  50%  { color: #268bd2; font-size: 88px; }
+  59%  { color: #268bd2; font-size: 88px; }
+  62%  { color: #ccc; font-size: 56px; }
+  95%  { opacity: 1.0; }
+  100% { right: 90%; opacity: 0.0; }
+}
+@-o-keyframes letter-slide {
+ 0%   { right: 0; opacity: 0.0;}
+ 5%   { opacity: 1.0; }
+ 48%  { color: #ccc; font-size: 56px; }
+ 50%  { color: #268bd2; font-size: 88px; }
+ 59%  { color: #268bd2; font-size: 88px; }
+ 62%  { color: #ccc; font-size: 56px; }
+ 95%  { opacity: 1.0; }
+ 100% { right: 90%; opacity: 0.0; }
+}
+@keyframes letter-slide {
+  0%   { right: 0; opacity: 0.0;}
+  5%   { opacity: 1.0; }
+  48%  { color: #ccc; font-size: 56px; }
+  50%  { color: #268bd2; font-size: 88px; }
+  59%  { color: #268bd2; font-size: 88px; }
+  62%  { color: #ccc; font-size: 56px; }
+  95%  { opacity: 1.0; }
+  100% { right: 90%; opacity: 0.0; }
+}

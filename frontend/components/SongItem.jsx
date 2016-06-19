@@ -7,7 +7,7 @@ module.exports = React.createClass({
 
     getInitialState: function () {
       return {
-        localTime: 0,
+        startTime: 0,
         readyBeats: [],
         ytTime: 0,
         score: 0,
@@ -39,12 +39,12 @@ keyDownHandler: function (e) {
     if (this.getPlayer().getPlayerState() !== 1) {
       this.getPlayer().playVideo();
       this.getBeats();
-      this.startTime = window.Date.now();
+      this.setState({ startTime: window.Date.now() });
     } else {
       this.getPlayer().pauseVideo();
     }
   } else if (e.which >= 65 || e.which <= 90) {
-    var hitTime = window.Date.now() - this.startTime;
+    var hitTime = window.Date.now() - this.state.startTime;
 
   }
 },
@@ -55,6 +55,7 @@ getBeats: function () {
   var j = 30;
   var that = this;
   this.loadedBeats = this.beats.slice(i, j)
+  var newBeats = [];
 
   showBeats = function () {
     if (that.loadedBeats.length <= 10){
@@ -63,17 +64,22 @@ getBeats: function () {
       that.loadedBeats = that.beats.slice(i, j)
     }
     timeNow = window.Date.now();
-    var newBeats = [];
 
     for (var i = 0; i < that.loadedBeats.length; i++) {
-      if (timeNow - that.startTime + 2000 >= that.loadedBeats[i].time){
-
+      if (timeNow - that.state.startTime + 2000 >= that.loadedBeats[i].time){
         newBeats.push(that.loadedBeats[i]);
       }
     }
+    var count = 0;
+    for (var i = 0; i < newBeats.length; i++) {
+      if (newBeats[i].time <= timeNow - that.state.startTime - 1000){
+       count += 1;
+      }
+    }
+    newBeats = newBeats.slice(count);
     that.loadedBeats = that.loadedBeats.slice(newBeats.length);
     that.setState({ readyBeats: newBeats});
-    setTimeout(showBeats, 10)
+    setTimeout(showBeats, 1)
   }
 
   showBeats();
@@ -83,16 +89,17 @@ displayBeats: function () {
   var displayedBeats = [];
   if (this.state.readyBeats) {
     this.state.readyBeats.forEach(function(beat){
-      console.log(beat);
+
       displayedBeats.push(this.renderBeat(beat))
     }.bind(this));
   }
+  console.log(displayedBeats.length);
+  return displayedBeats;
 },
 
 renderBeat: function (beat) {
-
   if (beat) {
-    return(<Beat key={beat.key}/>);
+    return(<Beat letter={beat.key}/>);
   } else {
     return (<div></div>);
   }

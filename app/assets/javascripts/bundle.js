@@ -26099,7 +26099,7 @@
 	var SongsApiUtil = __webpack_require__(231);
 	var YouTubePlayer = __webpack_require__(234);
 	var YoutubeApiUtil = __webpack_require__(232);
-	
+	var Beat = __webpack_require__(356);
 	module.exports = React.createClass({
 	  displayName: 'exports',
 	
@@ -26107,11 +26107,10 @@
 	  getInitialState: function () {
 	    return {
 	      localTime: 0,
+	      readyBeats: [],
 	      ytTime: 0,
-	      nextBeat: 0,
 	      score: 0,
-	      playing: false,
-	      lastStop: 0
+	      playing: false
 	    };
 	  },
 	
@@ -26137,7 +26136,7 @@
 	    if (e.which === 32) {
 	      if (this.getPlayer().getPlayerState() !== 1) {
 	        this.getPlayer().playVideo();
-	        this.renderBeats();
+	        this.getBeats();
 	        this.startTime = window.Date.now();
 	      } else {
 	        this.getPlayer().pauseVideo();
@@ -26147,21 +26146,53 @@
 	    }
 	  },
 	
-	  renderBeats: function () {
+	  getBeats: function () {
 	    var allBeats = this.beats;
 	    var i = 0;
 	    var j = 30;
 	    var that = this;
 	    this.loadedBeats = this.beats.slice(i, j);
-	    loadBeats = function () {
-	      debugger;
-	      if (this.loadedBeats.length <= 20) {
-	        i = j;
-	        j += 10;
-	        this.loadedBeats = that.beats.slice(i, j);
+	
+	    showBeats = function () {
+	      if (that.loadedBeats.length <= 10) {
+	        i += 20;
+	        j += 20;
+	        that.loadedBeats = that.beats.slice(i, j);
 	      }
+	      timeNow = window.Date.now();
+	      var newBeats = [];
+	
+	      for (var i = 0; i < that.loadedBeats.length; i++) {
+	        if (timeNow - that.startTime + 2000 >= that.loadedBeats[i].time) {
+	
+	          newBeats.push(that.loadedBeats[i]);
+	        }
+	      }
+	      that.loadedBeats = that.loadedBeats.slice(newBeats.length);
+	      that.setState({ readyBeats: newBeats });
+	      setTimeout(showBeats, 10);
 	    };
-	    setTimeout(loadBeats(), 250);
+	
+	    showBeats();
+	  },
+	
+	  displayBeats: function () {
+	    var displayedBeats = [];
+	    if (this.state.readyBeats) {
+	      this.state.readyBeats.forEach(function (beat) {
+	        console.log(beat);
+	        displayedBeats.push(this.renderBeat(beat));
+	      }.bind(this));
+	    }
+	  },
+	
+	  renderBeat: function (beat) {
+	
+	    if (beat) {
+	      return React.createElement(Beat, { key: beat.key });
+	    } else {
+	      return React.createElement('div', null);
+	    }
 	  },
 	
 	  enableIframeApi: function () {
@@ -26201,6 +26232,7 @@
 	          'ul',
 	          { className: 'group beat-letters' },
 	          React.createElement('div', { className: 'selected-before' }),
+	          this.displayBeats(),
 	          React.createElement('div', { className: 'selected-after' })
 	        ),
 	        React.createElement(
@@ -35903,6 +35935,27 @@
 	module.exports = exports['default'];
 	//# sourceMappingURL=eventNames.js.map
 
+
+/***/ },
+/* 356 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	module.exports = React.createClass({
+	  displayName: "exports",
+	
+	  render: function () {
+	    return React.createElement(
+	      "li",
+	      {
+	        className: this.props.selected ? "selected" : null,
+	        "data-score": this.props.score
+	      },
+	      this.props.key ? this.props.key : "🎧"
+	    );
+	  }
+	});
 
 /***/ }
 /******/ ]);

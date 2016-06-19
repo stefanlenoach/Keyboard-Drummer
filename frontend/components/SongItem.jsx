@@ -2,17 +2,16 @@ var React = require('react')
 var SongsApiUtil = require('../util/songs_api_util')
 var YouTubePlayer = require('youtube-player')
 var YoutubeApiUtil = require('../util/youtube_api_util')
-
+var Beat = require('./Beat');
 module.exports = React.createClass({
 
     getInitialState: function () {
       return {
         localTime: 0,
+        readyBeats: [],
         ytTime: 0,
-        nextBeat: 0,
         score: 0,
         playing: false,
-        lastStop: 0
       }
     },
 
@@ -39,7 +38,7 @@ keyDownHandler: function (e) {
   if (e.which === 32) {
     if (this.getPlayer().getPlayerState() !== 1) {
       this.getPlayer().playVideo();
-      this.renderBeats();
+      this.getBeats();
       this.startTime = window.Date.now();
     } else {
       this.getPlayer().pauseVideo();
@@ -50,21 +49,53 @@ keyDownHandler: function (e) {
   }
 },
 
-renderBeats: function () {
+getBeats: function () {
   var allBeats = this.beats;
   var i = 0;
   var j = 30;
   var that = this;
   this.loadedBeats = this.beats.slice(i, j)
-  loadBeats = function () {
-    debugger
-    if (this.loadedBeats.length <= 20){
-      i = j;
-      j += 10;
-      this.loadedBeats = that.beats.slice(i, j)
+
+  showBeats = function () {
+    if (that.loadedBeats.length <= 10){
+      i += 20 ;
+      j += 20;
+      that.loadedBeats = that.beats.slice(i, j)
     }
-  };
-  setTimeout(loadBeats(), 250)
+    timeNow = window.Date.now();
+    var newBeats = [];
+
+    for (var i = 0; i < that.loadedBeats.length; i++) {
+      if (timeNow - that.startTime + 2000 >= that.loadedBeats[i].time){
+
+        newBeats.push(that.loadedBeats[i]);
+      }
+    }
+    that.loadedBeats = that.loadedBeats.slice(newBeats.length);
+    that.setState({ readyBeats: newBeats});
+    setTimeout(showBeats, 10)
+  }
+
+  showBeats();
+},
+
+displayBeats: function () {
+  var displayedBeats = [];
+  if (this.state.readyBeats) {
+    this.state.readyBeats.forEach(function(beat){
+      console.log(beat);
+      displayedBeats.push(this.renderBeat(beat))
+    }.bind(this));
+  }
+},
+
+renderBeat: function (beat) {
+
+  if (beat) {
+    return(<Beat key={beat.key}/>);
+  } else {
+    return (<div></div>);
+  }
 },
 
   enableIframeApi: function () {
@@ -101,7 +132,7 @@ renderBeats: function () {
         <div className="game-layer" id="game-layer">
           <ul className="group beat-letters">
             <div className="selected-before"></div>
-
+            {this.displayBeats()}
             <div className="selected-after"></div>
           </ul>
           <section className="scoreboard">

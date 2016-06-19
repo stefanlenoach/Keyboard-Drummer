@@ -26152,28 +26152,33 @@
 	    var j = 30;
 	    var that = this;
 	    this.loadedBeats = this.beats.slice(i, j);
+	    var i = 0;
 	    var newBeats = [];
-	
 	    showBeats = function () {
-	      if (that.loadedBeats.length <= 10) {
-	        i += 20;
-	        j += 20;
-	        that.loadedBeats = that.beats.slice(i, j);
-	      }
+	      // if (that.loadedBeats.length <= 10){
+	      //   i += 20 ;
+	      //   j += 20;
+	      //   that.loadedBeats = that.beats.slice(i, j)
+	      // }
 	      timeNow = window.Date.now();
 	
-	      for (var i = 0; i < that.loadedBeats.length; i++) {
-	        if (timeNow - that.state.startTime + 2000 >= that.loadedBeats[i].time) {
-	          newBeats.push(that.loadedBeats[i]);
-	        }
+	      // for (var i = 0; i < that.loadedBeats.length; i++) {
+	      //   if ((timeNow - that.state.startTime + 1000 <= that.loadedBeats[i].time) && (timeNow - that.state.startTime + 2000 >= that.loadedBeats[i].time)){
+	      //     newBeats.push(that.loadedBeats[i]);
+	      //   }
+	      // }
+	      if (timeNow - that.state.startTime + 1000 <= that.beats[i].time && timeNow - that.state.startTime + 2000 >= that.beats[i].time) {
+	        newBeats.push(that.beats[i]);
+	        i += 1;
 	      }
-	      var count = 0;
-	      for (var i = 0; i < newBeats.length; i++) {
-	        if (newBeats[i].time <= timeNow - that.state.startTime - 1000) {
-	          count += 1;
-	        }
-	      }
-	      newBeats = newBeats.slice(count);
+	      // for (var i = 0; i < newBeats.length; i++) {
+	      //   if ((newBeats[i].time <= timeNow - that.state.startTime - 950) && (newBeats[i].time >= timeNow - that.state.startTime - 1000)){
+	      //    count += 1;
+	      //   }
+	      // }
+	      // if (newBeats.length >= 50){
+	      //   newBeats = newBeats.slice(10);
+	      // }
 	      that.loadedBeats = that.loadedBeats.slice(newBeats.length);
 	      that.setState({ readyBeats: newBeats });
 	      setTimeout(showBeats, 1);

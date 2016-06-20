@@ -26144,7 +26144,11 @@
 	      }
 	    } else if (e.which >= 65 || e.which <= 90) {
 	      var hitTime = window.Date.now() - this.state.startTime;
-	      debugger;
+	      this.state.readyBeats.forEach(function (beat) {
+	        if (hitTime < beat.time + 200 && hitTime > beat.time - 200) {
+	          console.log("HIT");
+	        }
+	      });
 	    }
 	  },
 	
@@ -26154,12 +26158,14 @@
 	    var i = 0;
 	    var newBeats = [];
 	    showBeats = function () {
-	
 	      timeNow = window.Date.now();
 	
 	      if (timeNow - that.state.startTime + 1000 <= that.beats[i].time && timeNow - that.state.startTime + 2000 >= that.beats[i].time) {
 	        newBeats.push(that.beats[i]);
 	        i += 1;
+	      }
+	      if (newBeats.length > 100) {
+	        newBeats = newBeats.slice(50);
 	      }
 	
 	      that.setState({ readyBeats: newBeats });

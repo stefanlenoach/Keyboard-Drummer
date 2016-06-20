@@ -52,6 +52,7 @@
   -webkit-animation: letter-slide 2.6s 1 linear; /* Safari 4+ */
   -moz-animation: letter-slide 2.6s 1 linear; /* Fx 5+ */
   animation: letter-slide 2.6s 1 linear;
+  animation-fill-mode: forwards;
   opacity: 0.0;
 }
 

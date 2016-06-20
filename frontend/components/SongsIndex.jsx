@@ -19,7 +19,7 @@ module.exports = React.createClass({
   },
 
   setSongs: function (sngs) {
-    this.setState({ songs: sngs, index: 0})
+    this.setState({ songs: sngs, index: 1})
   },
 
   contextTypes: {
@@ -28,25 +28,40 @@ module.exports = React.createClass({
 
   onKeyDown: function (event) {
     event.preventDefault();
+    var currentVal = 0;
     if (event.which === 13) {
       var songId = this.state.songs[this.state.index].id
       this.context.router.push("/songs/" + songId);
     }
+    if (event.which === 38){
+      currentVal = this.state.index - 1
+      this.setState({index: currentVal})
+    }
+    if (event.which === 40){
+      currentVal = this.state.index + 1
+      this.setState({index: currentVal})
+    }
   },
+
 
   allSongs: function () {
     var arr = [];
-    var i = 0;
-    var that = this;
+    var songs = this.state.songs;
+    var i = this.state.index;
+    var selected = '';
     this.state.songs.forEach(function (song) {
+      if (song === songs[i]){
+        selected = "selected";
+      } else {
+        selected = "false";
+      }
       arr.push(
-        <li key={song.song_id}>
-          <div className={that.state.index === i ? "selected" : null}>
+        <li key={song.id} className={selected}>
+          <div >
             {song.name}
           </div>
         </li>
       );
-      i++;
     });
     return arr;
   },

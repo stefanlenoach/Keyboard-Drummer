@@ -8,6 +8,10 @@
 .menu{
   color: white;
 }
+
+.selected{
+  background: #bbb;
+}
 .songs-index{
   color: white;
 }

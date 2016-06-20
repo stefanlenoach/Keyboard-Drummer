@@ -63,9 +63,7 @@ getBeats: function () {
       newBeats.push(that.beats[i]);
       i += 1;
     }
-    if (newBeats.length > 100){
-      newBeats = newBeats.slice(50);
-    }
+
 
     that.setState({ readyBeats: newBeats });
     setTimeout(showBeats, 1)

@@ -54,7 +54,7 @@
 	
 	var Menu = __webpack_require__(229);
 	var SongsIndex = __webpack_require__(230);
-	var SongItem = __webpack_require__(233);
+	var SongItem = __webpack_require__(232);
 	
 	var router = React.createElement(
 	  Router,
@@ -25878,7 +25878,7 @@
 
 	var React = __webpack_require__(1);
 	var SongsIndex = __webpack_require__(230);
-	var YoutubeApiUtil = __webpack_require__(232);
+	var YoutubeApiUtil = __webpack_require__(231);
 	
 	module.exports = React.createClass({
 	  displayName: 'exports',
@@ -25920,8 +25920,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var SongsApiUtil = __webpack_require__(231);
-	var YoutubeApiUtil = __webpack_require__(232);
+	var SongsApiUtil = __webpack_require__(233);
+	var YoutubeApiUtil = __webpack_require__(231);
 	
 	module.exports = React.createClass({
 	  displayName: 'exports',
@@ -25942,7 +25942,7 @@
 	  },
 	
 	  setSongs: function (sngs) {
-	    this.setState({ songs: sngs, index: 0 });
+	    this.setState({ songs: sngs, index: 1 });
 	  },
 	
 	  contextTypes: {
@@ -25951,27 +25951,41 @@
 	
 	  onKeyDown: function (event) {
 	    event.preventDefault();
+	    var currentVal = 0;
 	    if (event.which === 13) {
 	      var songId = this.state.songs[this.state.index].id;
 	      this.context.router.push("/songs/" + songId);
+	    }
+	    if (event.which === 38) {
+	      currentVal = this.state.index - 1;
+	      this.setState({ index: currentVal });
+	    }
+	    if (event.which === 40) {
+	      currentVal = this.state.index + 1;
+	      this.setState({ index: currentVal });
 	    }
 	  },
 	
 	  allSongs: function () {
 	    var arr = [];
-	    var i = 0;
-	    var that = this;
+	    var songs = this.state.songs;
+	    var i = this.state.index;
+	    var selected = '';
 	    this.state.songs.forEach(function (song) {
+	      if (song === songs[i]) {
+	        selected = "selected";
+	      } else {
+	        selected = "false";
+	      }
 	      arr.push(React.createElement(
 	        'li',
-	        { key: song.song_id },
+	        { key: song.id, className: selected },
 	        React.createElement(
 	          'div',
-	          { className: that.state.index === i ? "selected" : null },
+	          null,
 	          song.name
 	        )
 	      ));
-	      i++;
 	    });
 	    return arr;
 	  },
@@ -26001,56 +26015,6 @@
 
 /***/ },
 /* 231 */
-/***/ function(module, exports) {
-
-	module.exports = {
-	  getSongs: function (callback) {
-	    $.ajax({
-	      type: 'GET',
-	      url: 'api/songs',
-	      dataType: 'json',
-	      success: function (songs) {
-	        callback(songs);
-	      },
-	      error: function () {
-	        console.log("SongsApiUtil#getSongs error");
-	      }
-	    });
-	  },
-	
-	  getSong: function (songId, callback) {
-	    $.ajax({
-	      type: 'GET',
-	      url: 'api/songs/' + songId,
-	      dataType: 'json',
-	      success: function (song) {
-	        callback(song);
-	      },
-	      error: function () {
-	        console.log("SongsApiUtil#getSongBeats error");
-	      }
-	    });
-	  },
-	
-	  createBeat: function (beat) {
-	    $.ajax({
-	      type: 'POST',
-	      url: 'api/beats',
-	      dataType: 'json',
-	      data: { beat: beat },
-	      success: function (beat) {
-	        console.log(beat);
-	      },
-	      error: function () {
-	        console.log("SongsApiUtil#addBeat error");
-	      }
-	    });
-	  }
-	
-	};
-
-/***/ },
-/* 232 */
 /***/ function(module, exports) {
 
 	
@@ -26095,13 +26059,13 @@
 	};
 
 /***/ },
-/* 233 */
+/* 232 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var SongsApiUtil = __webpack_require__(231);
+	var SongsApiUtil = __webpack_require__(233);
 	var YouTubePlayer = __webpack_require__(234);
-	var YoutubeApiUtil = __webpack_require__(232);
+	var YoutubeApiUtil = __webpack_require__(231);
 	var Beat = __webpack_require__(356);
 	module.exports = React.createClass({
 	  displayName: 'exports',
@@ -26163,9 +26127,6 @@
 	      if (timeNow - that.state.startTime + 1000 <= that.beats[i].time && timeNow - that.state.startTime + 2000 >= that.beats[i].time) {
 	        newBeats.push(that.beats[i]);
 	        i += 1;
-	      }
-	      if (newBeats.length > 100) {
-	        newBeats = newBeats.slice(50);
 	      }
 	
 	      that.setState({ readyBeats: newBeats });
@@ -26244,6 +26205,56 @@
 	    );
 	  }
 	});
+
+/***/ },
+/* 233 */
+/***/ function(module, exports) {
+
+	module.exports = {
+	  getSongs: function (callback) {
+	    $.ajax({
+	      type: 'GET',
+	      url: 'api/songs',
+	      dataType: 'json',
+	      success: function (songs) {
+	        callback(songs);
+	      },
+	      error: function () {
+	        console.log("SongsApiUtil#getSongs error");
+	      }
+	    });
+	  },
+	
+	  getSong: function (songId, callback) {
+	    $.ajax({
+	      type: 'GET',
+	      url: 'api/songs/' + songId,
+	      dataType: 'json',
+	      success: function (song) {
+	        callback(song);
+	      },
+	      error: function () {
+	        console.log("SongsApiUtil#getSongBeats error");
+	      }
+	    });
+	  },
+	
+	  createBeat: function (beat) {
+	    $.ajax({
+	      type: 'POST',
+	      url: 'api/beats',
+	      dataType: 'json',
+	      data: { beat: beat },
+	      success: function (beat) {
+	        console.log(beat);
+	      },
+	      error: function () {
+	        console.log("SongsApiUtil#addBeat error");
+	      }
+	    });
+	  }
+	
+	};
 
 /***/ },
 /* 234 */

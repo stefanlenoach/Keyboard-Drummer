@@ -25907,8 +25907,10 @@
 	  render: function () {
 	    return React.createElement(
 	      'div',
-	      null,
-	      'HEEEEEEERe'
+	      { className: 'menu' },
+	      'Keyboard Drummer ',
+	      React.createElement('br', null),
+	      ' Press Space'
 	    );
 	  }
 	});
@@ -25991,7 +25993,8 @@
 	          null,
 	          this.allSongs()
 	        )
-	      )
+	      ),
+	      'Press Enter'
 	    );
 	  }
 	});
@@ -26108,9 +26111,7 @@
 	    return {
 	      startTime: 0,
 	      readyBeats: [],
-	      ytTime: 0,
-	      score: 0,
-	      playing: false
+	      score: 0
 	    };
 	  },
 	
@@ -26195,6 +26196,10 @@
 	        displayedBeats.push(this.renderBeat(beat));
 	      }.bind(this));
 	    }
+	    // for (var i = this.state.readyBeats.length-1; i < this.state.readyBeats.length; i++) {
+	    //   displayedBeats.push(this.state.readyBeats[i]);
+	    //
+	    // }
 	    console.log(displayedBeats.length);
 	    return displayedBeats;
 	  },
@@ -26243,23 +26248,7 @@
 	        React.createElement(
 	          'ul',
 	          { className: 'group beat-letters' },
-	          React.createElement('div', { className: 'selected-before' }),
-	          this.displayBeats(),
-	          React.createElement('div', { className: 'selected-after' })
-	        ),
-	        React.createElement(
-	          'section',
-	          { className: 'scoreboard' },
-	          React.createElement(
-	            'h1',
-	            null,
-	            'Score'
-	          ),
-	          React.createElement(
-	            'h2',
-	            null,
-	            this.state.score
-	          )
+	          this.displayBeats()
 	        )
 	      ),
 	      React.createElement('container', { className: 'song-container', id: 'song-container' })

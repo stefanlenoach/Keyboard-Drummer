@@ -61,7 +61,7 @@ module.exports = React.createClass({
             {this.allSongs()}
           </ul>
         </div>
-
+        Press Enter
       </div>
     )
   }

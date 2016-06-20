@@ -9,9 +9,7 @@ module.exports = React.createClass({
       return {
         startTime: 0,
         readyBeats: [],
-        ytTime: 0,
         score: 0,
-        playing: false,
       }
     },
 
@@ -98,6 +96,10 @@ displayBeats: function () {
       displayedBeats.push(this.renderBeat(beat))
     }.bind(this));
   }
+  // for (var i = this.state.readyBeats.length-1; i < this.state.readyBeats.length; i++) {
+  //   displayedBeats.push(this.state.readyBeats[i]);
+  //
+  // }
   console.log(displayedBeats.length);
   return displayedBeats;
 },
@@ -143,14 +145,9 @@ renderBeat: function (beat) {
       <div>
         <div className="game-layer" id="game-layer">
           <ul className="group beat-letters">
-            <div className="selected-before"></div>
             {this.displayBeats()}
-            <div className="selected-after"></div>
           </ul>
-          <section className="scoreboard">
-            <h1>Score</h1>
-            <h2>{this.state.score}</h2>
-          </section>
+
         </div>
         <container className="song-container" id="song-container">
         </container>

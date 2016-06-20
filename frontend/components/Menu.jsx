@@ -26,7 +26,7 @@ module.exports = React.createClass({
 
   render: function () {
     return (
-      <div>HEEEEEEERe
+      <div className='menu'>Keyboard Drummer <br/> Press Space
       </div>
     );
   }

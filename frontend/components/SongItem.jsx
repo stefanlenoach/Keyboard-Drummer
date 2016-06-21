@@ -8,6 +8,7 @@ module.exports = React.createClass({
     getInitialState: function () {
       return {
         startTime: 0,
+        gameTIme: 0,
         readyBeats: [],
         score: 0,
       }
@@ -23,8 +24,8 @@ module.exports = React.createClass({
   },
 
   saveSongData: function (song) {
-  this.beats = song.beats
-  this.songId = song.id
+  this.beats = song.beats;
+  this.songId = song.id;
   this.youtubeId = song.youtube_id;
   this.enableIframeApi();
 },
@@ -34,18 +35,20 @@ keyDownHandler: function (e) {
   e.stopPropagation();
   e.preventDefault();
   if (e.which === 32) {
-    if (this.getPlayer().getPlayerState() !== 1) {
+    if (this.getPlayer().getPlayerState && this.getPlayer().getPlayerState() !== 1) {
       this.getPlayer().playVideo();
       this.getBeats();
       this.setState({ startTime: window.Date.now() });
     } else {
+      this.setState({})
       this.getPlayer().pauseVideo();
+
     }
   } else if (e.which >= 65 || e.which <= 90) {
     var hitTime = window.Date.now() - this.state.startTime;
-    this.state.readyBeats.forEach( function (beat){
-      if (hitTime < beat.time + 200 && hitTime > beat.time - 200){
-        console.log("HIT");
+    this.beats.forEach( function (beat){
+      if ((hitTime < beat.time + 100 && hitTime > beat.time - 100) && (beat.key === "v")){
+        console.log("HIT BASS");
       }
     });
   }
@@ -66,7 +69,7 @@ getBeats: function () {
 
 
     that.setState({ readyBeats: newBeats });
-    setTimeout(showBeats, 1)
+    // setTimeout(showBeats, 1)
   }
 
   showBeats();
@@ -74,12 +77,12 @@ getBeats: function () {
 
 displayBeats: function () {
   var displayedBeats = [];
-  if (this.state.readyBeats) {
-    this.state.readyBeats.forEach(function(beat){
-
-      displayedBeats.push(this.renderBeat(beat))
-    }.bind(this));
-  }
+  // if (this.state.readyBeats) {
+  //   this.state.readyBeats.forEach(function(beat){
+  //
+  //     displayedBeats.push(this.renderBeat(beat))
+  //   }.bind(this));
+  // }
 
   // for (var i = this.state.readyBeats.length-1; i < this.state.readyBeats.length; i++) {
   //   displayedBeats.push(this.renderBeat(his.state.readyBeats[i]));
@@ -114,7 +117,17 @@ renderBeat: function (beat) {
         width: '100%',
         height: '100%',
         videoId: youtubeId,
-        wmode: "transparent"
+        wmode: "transparent",
+        playerVars: {
+          'autoplay': 0,
+          'controls': 0,
+          modestBranding: 1,
+          showinfo: 0,
+          fs: 0,
+          disablekb: 0,
+          rel:0,
+          iv_load_policy: 3
+        },
       });
     }
     onYouTubeIframeAPIReady();
@@ -123,8 +136,6 @@ renderBeat: function (beat) {
       return player;
     }
   },
-
-
 
   render: function () {
     return (

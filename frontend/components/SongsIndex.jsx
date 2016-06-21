@@ -19,7 +19,7 @@ module.exports = React.createClass({
   },
 
   setSongs: function (sngs) {
-    this.setState({ songs: sngs, index: 1})
+    this.setState({ songs: sngs, index: 0})
   },
 
   contextTypes: {
@@ -34,12 +34,16 @@ module.exports = React.createClass({
       this.context.router.push("/songs/" + songId);
     }
     if (event.which === 38){
-      currentVal = this.state.index - 1
-      this.setState({index: currentVal})
+      if (this.state.index > 0){
+        currentVal = this.state.index - 1
+        this.setState({index: currentVal})
+      }
     }
     if (event.which === 40){
-      currentVal = this.state.index + 1
-      this.setState({index: currentVal})
+      if (this.state.index < this.state.songs.length - 1){
+        currentVal = this.state.index + 1
+        this.setState({index: currentVal})
+      }
     }
   },
 

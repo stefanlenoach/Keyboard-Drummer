@@ -55,13 +55,15 @@
 	var Menu = __webpack_require__(229);
 	var SongsIndex = __webpack_require__(230);
 	var SongItem = __webpack_require__(232);
+	var BeatMaker = __webpack_require__(357);
 	
 	var router = React.createElement(
 	  Router,
 	  { history: hashHistory },
 	  React.createElement(Route, { path: '/', component: Menu }),
 	  React.createElement(Route, { path: '/songs', component: SongsIndex }),
-	  React.createElement(Route, { path: '/songs/:id', component: SongItem })
+	  React.createElement(Route, { path: '/songs/:id', component: SongItem }),
+	  React.createElement(Route, { path: 'maker', component: BeatMaker })
 	);
 	
 	$(document).on('ready', function () {
@@ -25942,7 +25944,7 @@
 	  },
 	
 	  setSongs: function (sngs) {
-	    this.setState({ songs: sngs, index: 1 });
+	    this.setState({ songs: sngs, index: 0 });
 	  },
 	
 	  contextTypes: {
@@ -25957,12 +25959,16 @@
 	      this.context.router.push("/songs/" + songId);
 	    }
 	    if (event.which === 38) {
-	      currentVal = this.state.index - 1;
-	      this.setState({ index: currentVal });
+	      if (this.state.index > 0) {
+	        currentVal = this.state.index - 1;
+	        this.setState({ index: currentVal });
+	      }
 	    }
 	    if (event.which === 40) {
-	      currentVal = this.state.index + 1;
-	      this.setState({ index: currentVal });
+	      if (this.state.index < this.state.songs.length - 1) {
+	        currentVal = this.state.index + 1;
+	        this.setState({ index: currentVal });
+	      }
 	    }
 	  },
 	
@@ -26074,6 +26080,7 @@
 	  getInitialState: function () {
 	    return {
 	      startTime: 0,
+	      gameTIme: 0,
 	      readyBeats: [],
 	      score: 0
 	    };
@@ -26099,18 +26106,19 @@
 	    e.stopPropagation();
 	    e.preventDefault();
 	    if (e.which === 32) {
-	      if (this.getPlayer().getPlayerState() !== 1) {
+	      if (this.getPlayer().getPlayerState && this.getPlayer().getPlayerState() !== 1) {
 	        this.getPlayer().playVideo();
 	        this.getBeats();
 	        this.setState({ startTime: window.Date.now() });
 	      } else {
+	        this.setState({});
 	        this.getPlayer().pauseVideo();
 	      }
 	    } else if (e.which >= 65 || e.which <= 90) {
 	      var hitTime = window.Date.now() - this.state.startTime;
-	      this.state.readyBeats.forEach(function (beat) {
-	        if (hitTime < beat.time + 200 && hitTime > beat.time - 200) {
-	          console.log("HIT");
+	      this.beats.forEach(function (beat) {
+	        if (hitTime < beat.time + 100 && hitTime > beat.time - 100 && beat.key === "v") {
+	          console.log("HIT BASS");
 	        }
 	      });
 	    }
@@ -26130,7 +26138,7 @@
 	      }
 	
 	      that.setState({ readyBeats: newBeats });
-	      setTimeout(showBeats, 1);
+	      // setTimeout(showBeats, 1)
 	    };
 	
 	    showBeats();
@@ -26138,12 +26146,12 @@
 	
 	  displayBeats: function () {
 	    var displayedBeats = [];
-	    if (this.state.readyBeats) {
-	      this.state.readyBeats.forEach(function (beat) {
-	
-	        displayedBeats.push(this.renderBeat(beat));
-	      }.bind(this));
-	    }
+	    // if (this.state.readyBeats) {
+	    //   this.state.readyBeats.forEach(function(beat){
+	    //
+	    //     displayedBeats.push(this.renderBeat(beat))
+	    //   }.bind(this));
+	    // }
 	
 	    // for (var i = this.state.readyBeats.length-1; i < this.state.readyBeats.length; i++) {
 	    //   displayedBeats.push(this.renderBeat(his.state.readyBeats[i]));
@@ -26178,7 +26186,17 @@
 	        width: '100%',
 	        height: '100%',
 	        videoId: youtubeId,
-	        wmode: "transparent"
+	        wmode: "transparent",
+	        playerVars: {
+	          'autoplay': 0,
+	          'controls': 0,
+	          modestBranding: 1,
+	          showinfo: 0,
+	          fs: 0,
+	          disablekb: 0,
+	          rel: 0,
+	          iv_load_policy: 3
+	        }
 	      });
 	    };
 	    onYouTubeIframeAPIReady();
@@ -35952,6 +35970,91 @@
 	      { className: this.props.letter },
 	      this.props.letter
 	    );
+	  }
+	});
+
+/***/ },
+/* 357 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var SongsApiUtil = __webpack_require__(233);
+	var YouTubePlayer = __webpack_require__(234);
+	
+	module.exports = React.createClass({
+	  displayName: 'exports',
+	
+	  getInitialState: function () {
+	    return {
+	      localTime: 0,
+	      ytTime: 0,
+	      nextBeat: 0
+	    };
+	  },
+	
+	  componentDidMount: function () {
+	    $(document.body).on('keydown', this.keyDownHandler);
+	    this.enableIframeApi();
+	  },
+	
+	  componentWillUnmount: function () {
+	    $(document.body).off('keydown', this.keyDownHandler);
+	  },
+	
+	  keyDownHandler: function (e) {
+	    e.stopPropagation();
+	    e.preventDefault();
+	    if (e.which === 32) {
+	      if (this.getPlayer().getPlayerState() !== 1) {
+	        this.getPlayer().playVideo();
+	        this.startTime = window.Date.now();
+	      } else {
+	        this.getPlayer().pauseVideo();
+	      }
+	    } else if (e.which >= 65 || e.which <= 90) {
+	      var beatTime = window.Date.now() - this.startTime;
+	      var data = { time: beatTime, song_id: 2, key: e.key.toString() };
+	      SongsApiUtil.createBeat(data);
+	    }
+	  },
+	
+	  playerTimeInterval: function () {
+	    var ytTime = this.getPlayer().getCurrentTime();
+	    if (ytTime === this.state.ytTime) {
+	      this.setState({ localTime: this.state.localTime + .010 });
+	    } else {
+	      this.setState({ localTime: ytTime, ytTime: ytTime });
+	    }
+	  },
+	
+	  enableIframeApi: function () {
+	    var tag = document.createElement('script');
+	    tag.src = "https://www.youtube.com/iframe_api";
+	    var firstScriptTag = document.getElementsByTagName('script')[0];
+	    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+	
+	    var player;
+	    var youtubeId = this.props.youtubeId;
+	    onYouTubeIframeAPIReady = function () {
+	      player = new YT.Player('song-container', {
+	        position: 'absolute',
+	        top: 0,
+	        left: 0,
+	        width: '100%',
+	        height: '100%',
+	        videoId: 'siwpn14IE7E',
+	        wmode: "transparent"
+	      });
+	    };
+	    onYouTubeIframeAPIReady();
+	
+	    this.getPlayer = function () {
+	      return player;
+	    };
+	  },
+	
+	  render: function () {
+	    return React.createElement('container', { className: 'song-container', id: 'song-container' });
 	  }
 	});
 

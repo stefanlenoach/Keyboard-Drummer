@@ -1,7 +1,6 @@
 var React = require('react')
 var SongsApiUtil = require('../util/songs_api_util')
 var YouTubePlayer = require('youtube-player')
-var YoutubeApiUtil = require('../util/youtube_api_util')
 
 module.exports = React.createClass({
   getInitialState: function () {
@@ -33,7 +32,7 @@ module.exports = React.createClass({
       }
     } else if (e.which >= 65 || e.which <= 90) {
       var beatTime = window.Date.now() - this.startTime;
-      var data = { time: beatTime, song_id: this.props.params.id, key: e.key.toString() };
+      var data = { time: beatTime, song_id: 2, key: e.key.toString() };
       SongsApiUtil.createBeat(data);
     }
   },
@@ -62,7 +61,7 @@ module.exports = React.createClass({
         left: 0,
         width: '100%',
         height: '100%',
-        videoId: '0J2QdDbelmY',
+        videoId: 'siwpn14IE7E',
         wmode: "transparent"
       });
     }

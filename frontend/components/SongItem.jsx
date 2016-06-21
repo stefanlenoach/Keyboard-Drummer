@@ -8,9 +8,13 @@ module.exports = React.createClass({
     getInitialState: function () {
       return {
         startTime: 0,
-        gameTIme: 0,
+        videoTime: 0,
+        localTime: 0,
+        currentBeat: 0,
         readyBeats: [],
         score: 0,
+        playing: false,
+        lastStop: 0
       }
     },
 
@@ -35,23 +39,84 @@ keyDownHandler: function (e) {
   e.stopPropagation();
   e.preventDefault();
   if (e.which === 32) {
-    if (this.getPlayer().getPlayerState && this.getPlayer().getPlayerState() !== 1) {
-      this.getPlayer().playVideo();
-      this.getBeats();
-      this.setState({ startTime: window.Date.now() });
-    } else {
-      this.setState({})
-      this.getPlayer().pauseVideo();
-
+    if (this.player().getPlayerState && this.player().getPlayerState() !== 1) {
+      this.togglePlay();
     }
   } else if (e.which >= 65 || e.which <= 90) {
     var hitTime = window.Date.now() - this.state.startTime;
     this.beats.forEach( function (beat){
-      if ((hitTime < beat.time + 100 && hitTime > beat.time - 100) && (beat.key === "v")){
+      if ((hitTime < beat.time + 100 && hitTime > beat.time - 100) && (beat.key === e.key)){
         console.log("HIT BASS");
       }
     });
   }
+},
+
+togglePlay: function () {
+  if (this.player().getPlayerState && this.player().getPlayerState() !== 1) {
+    this.player().playVideo();
+    this.intervalVar = setInterval(this.playerTimeInterval, 10);
+    this.setState({ playing: true, localTime: this.state.ytTime });
+  } else {
+    this.player().pauseVideo();
+    clearInterval(this.intervalVar);
+    this.setState({ playing: false, lastStop: this.state.localTime });
+  }
+},
+
+playerTimeInterval: function () {
+  if (this.player().getPlayerState() !== 1) {return;}
+
+  var videoTime = this.player().getCurrentTime();
+  if (videoTime === this.state.videoTime) {
+    this.setState({ localTime: this.state.localTime + .01 });
+  } else {
+    this.setState({ localTime: videoTime, videoTime: videoTime });
+  }
+  this.incrementBeat();
+},
+
+incrementBeat: function () {
+  if (this.beats[this.state.currentBeat + 1].time < this.state.localTime + 0.15) {
+    var currentBeat = this.state.currentBeat + 1;
+    this.setState({
+      currentBeat: currentBeat
+    });
+
+  }
+},
+
+renderOneBeat: function (i) {
+  if (this.beats[i]) {
+   return (<Beat
+      letter={this.beats ? this.beats[i].letter : null}
+      key={i + this.beats[i].letter}
+      score={this.beats[i].score}
+    />);
+  } else {
+    return (<Beat
+      letter={null}
+      key={i}
+    />);
+  }
+},
+
+renderBeats: function () {
+  if (!this.beats) { return null } 
+  if (!this.state.playing) {
+    return this.renderPauseMessage();
+  }
+
+  var currentBeat = this.state.currentBeat;
+  var beatArr = [];
+  for (var i = (currentBeat - 10 > 0 ? currentBeat - 10 : 0); i < this.beats.length && i < currentBeat + 10; i++) {
+    // to display, beat must be within 1.7s of localTime AND at time after last video pause
+    if (Math.abs(this.beats[i].time - this.state.localTime) < 1.3 && this.beats[i].time > this.state.lastStop + 1.0) {
+      beatArr.push(this.renderOneBeat(i));
+    }
+  }
+
+  return beatArr;
 },
 
 getBeats: function () {
@@ -66,10 +131,8 @@ getBeats: function () {
       newBeats.push(that.beats[i]);
       i += 1;
     }
-
-
     that.setState({ readyBeats: newBeats });
-    // setTimeout(showBeats, 1)
+    setTimeout(showBeats, 1)
   }
 
   showBeats();
@@ -77,12 +140,12 @@ getBeats: function () {
 
 displayBeats: function () {
   var displayedBeats = [];
-  // if (this.state.readyBeats) {
-  //   this.state.readyBeats.forEach(function(beat){
-  //
-  //     displayedBeats.push(this.renderBeat(beat))
-  //   }.bind(this));
-  // }
+  if (this.state.readyBeats) {
+    this.state.readyBeats.forEach(function(beat){
+
+      displayedBeats.push(this.renderBeat(beat))
+    }.bind(this));
+  }
 
   // for (var i = this.state.readyBeats.length-1; i < this.state.readyBeats.length; i++) {
   //   displayedBeats.push(this.renderBeat(his.state.readyBeats[i]));
@@ -132,7 +195,7 @@ renderBeat: function (beat) {
     }
     onYouTubeIframeAPIReady();
 
-    this.getPlayer = function () {
+    this.player = function () {
       return player;
     }
   },
@@ -142,7 +205,7 @@ renderBeat: function (beat) {
       <div>
         <div className="game-layer" id="game-layer">
           <ul className="group beat-letters">
-            {this.displayBeats()}
+            {this.renderBeats()}
           </ul>
 
         </div>

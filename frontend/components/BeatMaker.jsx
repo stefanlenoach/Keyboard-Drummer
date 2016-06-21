@@ -24,7 +24,7 @@ module.exports = React.createClass({
     e.stopPropagation();
     e.preventDefault();
     if (e.which === 32) {
-      if (this.getPlayer().getPlayerState() !== 1) {
+      if (this.getPlayer().getPlayerState && this.getPlayer().getPlayerState() !== 1) {
         this.getPlayer().playVideo();
         this.startTime = window.Date.now();
       } else {
@@ -32,7 +32,7 @@ module.exports = React.createClass({
       }
     } else if (e.which >= 65 || e.which <= 90) {
       var beatTime = window.Date.now() - this.startTime;
-      var data = { time: beatTime, song_id: 2, key: e.key.toString() };
+      var data = { time: beatTime, song_id: 1, key: e.key.toString() };
       SongsApiUtil.createBeat(data);
     }
   },
@@ -61,7 +61,7 @@ module.exports = React.createClass({
         left: 0,
         width: '100%',
         height: '100%',
-        videoId: 'siwpn14IE7E',
+        videoId: '0J2QdDbelmY',
         wmode: "transparent"
       });
     }

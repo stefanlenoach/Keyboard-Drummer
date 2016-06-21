@@ -54,7 +54,7 @@
 	
 	var Menu = __webpack_require__(229);
 	var SongsIndex = __webpack_require__(230);
-	var SongItem = __webpack_require__(232);
+	var SongItem = __webpack_require__(233);
 	var BeatMaker = __webpack_require__(357);
 	
 	var router = React.createElement(
@@ -25880,7 +25880,7 @@
 
 	var React = __webpack_require__(1);
 	var SongsIndex = __webpack_require__(230);
-	var YoutubeApiUtil = __webpack_require__(231);
+	var YoutubeApiUtil = __webpack_require__(232);
 	
 	module.exports = React.createClass({
 	  displayName: 'exports',
@@ -25922,8 +25922,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var SongsApiUtil = __webpack_require__(233);
-	var YoutubeApiUtil = __webpack_require__(231);
+	var SongsApiUtil = __webpack_require__(231);
+	var YoutubeApiUtil = __webpack_require__(232);
 	
 	module.exports = React.createClass({
 	  displayName: 'exports',
@@ -26023,6 +26023,56 @@
 /* 231 */
 /***/ function(module, exports) {
 
+	module.exports = {
+	  getSongs: function (callback) {
+	    $.ajax({
+	      type: 'GET',
+	      url: 'api/songs',
+	      dataType: 'json',
+	      success: function (songs) {
+	        callback(songs);
+	      },
+	      error: function () {
+	        console.log("SongsApiUtil#getSongs error");
+	      }
+	    });
+	  },
+	
+	  getSong: function (songId, callback) {
+	    $.ajax({
+	      type: 'GET',
+	      url: 'api/songs/' + songId,
+	      dataType: 'json',
+	      success: function (song) {
+	        callback(song);
+	      },
+	      error: function () {
+	        console.log("SongsApiUtil#getSongBeats error");
+	      }
+	    });
+	  },
+	
+	  createBeat: function (beat) {
+	    $.ajax({
+	      type: 'POST',
+	      url: 'api/beats',
+	      dataType: 'json',
+	      data: { beat: beat },
+	      success: function (beat) {
+	        console.log(beat);
+	      },
+	      error: function () {
+	        console.log("SongsApiUtil#addBeat error");
+	      }
+	    });
+	  }
+	
+	};
+
+/***/ },
+/* 232 */
+/***/ function(module, exports) {
+
 	
 	module.exports = {
 	  loadIframePlayer: function () {
@@ -26065,13 +26115,13 @@
 	};
 
 /***/ },
-/* 232 */
+/* 233 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var SongsApiUtil = __webpack_require__(233);
+	var SongsApiUtil = __webpack_require__(231);
 	var YouTubePlayer = __webpack_require__(234);
-	var YoutubeApiUtil = __webpack_require__(231);
+	var YoutubeApiUtil = __webpack_require__(232);
 	var Beat = __webpack_require__(356);
 	module.exports = React.createClass({
 	  displayName: 'exports',
@@ -26080,9 +26130,13 @@
 	  getInitialState: function () {
 	    return {
 	      startTime: 0,
-	      gameTIme: 0,
+	      videoTime: 0,
+	      localTime: 0,
+	      currentBeat: 0,
 	      readyBeats: [],
-	      score: 0
+	      score: 0,
+	      playing: false,
+	      lastStop: 0
 	    };
 	  },
 	
@@ -26106,22 +26160,87 @@
 	    e.stopPropagation();
 	    e.preventDefault();
 	    if (e.which === 32) {
-	      if (this.getPlayer().getPlayerState && this.getPlayer().getPlayerState() !== 1) {
-	        this.getPlayer().playVideo();
-	        this.getBeats();
-	        this.setState({ startTime: window.Date.now() });
-	      } else {
-	        this.setState({});
-	        this.getPlayer().pauseVideo();
+	      if (this.player().getPlayerState && this.player().getPlayerState() !== 1) {
+	        this.togglePlay();
 	      }
 	    } else if (e.which >= 65 || e.which <= 90) {
 	      var hitTime = window.Date.now() - this.state.startTime;
 	      this.beats.forEach(function (beat) {
-	        if (hitTime < beat.time + 100 && hitTime > beat.time - 100 && beat.key === "v") {
+	        if (hitTime < beat.time + 100 && hitTime > beat.time - 100 && beat.key === e.key) {
 	          console.log("HIT BASS");
 	        }
 	      });
 	    }
+	  },
+	
+	  togglePlay: function () {
+	    if (this.player().getPlayerState && this.player().getPlayerState() !== 1) {
+	      this.player().playVideo();
+	      this.intervalVar = setInterval(this.playerTimeInterval, 10);
+	      this.setState({ playing: true, localTime: this.state.ytTime });
+	    } else {
+	      this.player().pauseVideo();
+	      clearInterval(this.intervalVar);
+	      this.setState({ playing: false, lastStop: this.state.localTime });
+	    }
+	  },
+	
+	  playerTimeInterval: function () {
+	    if (this.player().getPlayerState() !== 1) {
+	      return;
+	    }
+	
+	    var videoTime = this.player().getCurrentTime();
+	    if (videoTime === this.state.videoTime) {
+	      this.setState({ localTime: this.state.localTime + .01 });
+	    } else {
+	      this.setState({ localTime: videoTime, videoTime: videoTime });
+	    }
+	    this.incrementBeat();
+	  },
+	
+	  incrementBeat: function () {
+	    if (this.beats[this.state.currentBeat + 1].time < this.state.localTime + 0.15) {
+	      var currentBeat = this.state.currentBeat + 1;
+	      this.setState({
+	        currentBeat: currentBeat
+	      });
+	    }
+	  },
+	
+	  renderOneBeat: function (i) {
+	    if (this.beats[i]) {
+	      return React.createElement(Beat, {
+	        letter: this.beats ? this.beats[i].letter : null,
+	        key: i + this.beats[i].letter,
+	        score: this.beats[i].score
+	      });
+	    } else {
+	      return React.createElement(Beat, {
+	        letter: null,
+	        key: i
+	      });
+	    }
+	  },
+	
+	  renderBeats: function () {
+	    if (!this.beats) {
+	      return null;
+	    }
+	    if (!this.state.playing) {
+	      return this.renderPauseMessage();
+	    }
+	
+	    var currentBeat = this.state.currentBeat;
+	    var beatArr = [];
+	    for (var i = currentBeat - 10 > 0 ? currentBeat - 10 : 0; i < this.beats.length && i < currentBeat + 10; i++) {
+	      // to display, beat must be within 1.7s of localTime AND at time after last video pause
+	      if (Math.abs(this.beats[i].time - this.state.localTime) < 1.3 && this.beats[i].time > this.state.lastStop + 1.0) {
+	        beatArr.push(this.renderOneBeat(i));
+	      }
+	    }
+	
+	    return beatArr;
 	  },
 	
 	  getBeats: function () {
@@ -26136,9 +26255,8 @@
 	        newBeats.push(that.beats[i]);
 	        i += 1;
 	      }
-	
 	      that.setState({ readyBeats: newBeats });
-	      // setTimeout(showBeats, 1)
+	      setTimeout(showBeats, 1);
 	    };
 	
 	    showBeats();
@@ -26146,12 +26264,12 @@
 	
 	  displayBeats: function () {
 	    var displayedBeats = [];
-	    // if (this.state.readyBeats) {
-	    //   this.state.readyBeats.forEach(function(beat){
-	    //
-	    //     displayedBeats.push(this.renderBeat(beat))
-	    //   }.bind(this));
-	    // }
+	    if (this.state.readyBeats) {
+	      this.state.readyBeats.forEach(function (beat) {
+	
+	        displayedBeats.push(this.renderBeat(beat));
+	      }.bind(this));
+	    }
 	
 	    // for (var i = this.state.readyBeats.length-1; i < this.state.readyBeats.length; i++) {
 	    //   displayedBeats.push(this.renderBeat(his.state.readyBeats[i]));
@@ -26201,7 +26319,7 @@
 	    };
 	    onYouTubeIframeAPIReady();
 	
-	    this.getPlayer = function () {
+	    this.player = function () {
 	      return player;
 	    };
 	  },
@@ -26216,63 +26334,13 @@
 	        React.createElement(
 	          'ul',
 	          { className: 'group beat-letters' },
-	          this.displayBeats()
+	          this.renderBeats()
 	        )
 	      ),
 	      React.createElement('container', { className: 'song-container', id: 'song-container' })
 	    );
 	  }
 	});
-
-/***/ },
-/* 233 */
-/***/ function(module, exports) {
-
-	module.exports = {
-	  getSongs: function (callback) {
-	    $.ajax({
-	      type: 'GET',
-	      url: 'api/songs',
-	      dataType: 'json',
-	      success: function (songs) {
-	        callback(songs);
-	      },
-	      error: function () {
-	        console.log("SongsApiUtil#getSongs error");
-	      }
-	    });
-	  },
-	
-	  getSong: function (songId, callback) {
-	    $.ajax({
-	      type: 'GET',
-	      url: 'api/songs/' + songId,
-	      dataType: 'json',
-	      success: function (song) {
-	        callback(song);
-	      },
-	      error: function () {
-	        console.log("SongsApiUtil#getSongBeats error");
-	      }
-	    });
-	  },
-	
-	  createBeat: function (beat) {
-	    $.ajax({
-	      type: 'POST',
-	      url: 'api/beats',
-	      dataType: 'json',
-	      data: { beat: beat },
-	      success: function (beat) {
-	        console.log(beat);
-	      },
-	      error: function () {
-	        console.log("SongsApiUtil#addBeat error");
-	      }
-	    });
-	  }
-	
-	};
 
 /***/ },
 /* 234 */
@@ -35978,7 +36046,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var SongsApiUtil = __webpack_require__(233);
+	var SongsApiUtil = __webpack_require__(231);
 	var YouTubePlayer = __webpack_require__(234);
 	
 	module.exports = React.createClass({
@@ -36005,7 +36073,7 @@
 	    e.stopPropagation();
 	    e.preventDefault();
 	    if (e.which === 32) {
-	      if (this.getPlayer().getPlayerState() !== 1) {
+	      if (this.getPlayer().getPlayerState && this.getPlayer().getPlayerState() !== 1) {
 	        this.getPlayer().playVideo();
 	        this.startTime = window.Date.now();
 	      } else {
@@ -36013,7 +36081,7 @@
 	      }
 	    } else if (e.which >= 65 || e.which <= 90) {
 	      var beatTime = window.Date.now() - this.startTime;
-	      var data = { time: beatTime, song_id: 2, key: e.key.toString() };
+	      var data = { time: beatTime, song_id: 1, key: e.key.toString() };
 	      SongsApiUtil.createBeat(data);
 	    }
 	  },
@@ -36042,7 +36110,7 @@
 	        left: 0,
 	        width: '100%',
 	        height: '100%',
-	        videoId: 'siwpn14IE7E',
+	        videoId: '0J2QdDbelmY',
 	        wmode: "transparent"
 	      });
 	    };

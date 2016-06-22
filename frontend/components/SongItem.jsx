@@ -10,6 +10,9 @@ module.exports = React.createClass({
         startTime: 0,
         videoTime: 0,
         localTime: 0,
+        noteState: "",
+        multCount: 0,
+        multiplier: 1,
         score: 0,
         currentBeat: 0,
         beats: [],
@@ -46,11 +49,14 @@ keyDownHandler: function (e) {
     var hitTime = this.state.localTime;
       var i = this.state.currentBeat;
       var score = this.state.score
+      this.multiplier();
       if ((hitTime < this.state.beats[i].time + .1 && hitTime > this.state.beats[i].time - .1) && (this.state.beats[i].key === e.key)){
-        this.setState({ score: score + 10 })
+        var multCount = this.state.multCount + 1;
+        var multiplier = this.state.multiplier;
+        this.setState({ score: score + (10 * multiplier), noteState: "green", multCount: multCount});
         return
       } else {
-        this.setState({ score: score - 20 })
+        this.setState({ score: score - 20, noteState: "red", multCount: 0, multiplier: 1})
       }
 
   }
@@ -91,7 +97,7 @@ incrementBeat: function () {
   }
 },
 
-renderOneBeat: function (i) {
+displayBeat: function (i) {
   if (this.state.beats[i]) {
    return (<Beat
       letter={this.state.beats[i].key}
@@ -100,20 +106,28 @@ renderOneBeat: function (i) {
   }
 },
 
-renderBeats: function () {
+displayBeats: function () {
   if (!this.state.beats) { return null }
-  if (!this.state.playing) {
-  }
-  var currentBeat = this.state.currentBeat;
-  var beatArr = [];
+  var beats = [];
   for (var i = 0; i < this.state.beats.length; i++) {
-
     if (Math.abs(this.state.beats[i].time - this.state.localTime) < 1.3 && this.state.beats[i].time > this.state.lastStop + 1.0) {
-      beatArr.push(this.renderOneBeat(i));
+      beats.push(this.displayBeat(i));
     }
   }
 
-  return beatArr;
+  return beats;
+},
+
+multiplier: function () {
+  if (this.state.multCount < 4) {
+    this.setState({ multiplier: 1 })
+  } else if (this.state.multCount < 12) {
+    this.setState({ multiplier: 2 })
+  } else if (this.state.multCount < 16) {
+    this.setState({ multiplier: 3 })
+  } else if (this.state.multCount >= 16 ){
+    this.setState({ multiplier: 4 })
+  }
 },
 
   enableIframeApi: function () {
@@ -152,16 +166,28 @@ renderBeats: function () {
     }
   },
 
+  onBeat: function () {
+    if (this.state.noteState === "green") {
+      return (<div className='green'>NICE</div>);
+    } else if (this.state.noteState === "red") {
+      return(<div className='red'>NOT MY TEMPO</div>);
+    } else {
+      return (<div></div>)
+    }
+  },
+
   render: function () {
     return (
       <div>
         <div className="game-layer" id="game-layer">
           <ul className="group beat-letters">
-            {this.renderBeats()}
+            {this.displayBeats()}
           </ul>
           <section className="scoreboard">
             <h1>SCORE: {this.state.score}</h1>
-
+            <h1>MULTIPLIER: {this.state.multiplier}</h1>
+            <h1>STREAK: {this.state.multCount}</h1>
+            <div className='feedback'>{this.onBeat()}</div>
           </section>
 
         </div>

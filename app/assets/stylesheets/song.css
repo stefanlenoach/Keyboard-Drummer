@@ -26,9 +26,14 @@
 .instructions{
   font-weight: 100;
   font-size: 20px;
-  text-align: left;
-  position: relative;
+  width: 500px;
+  margin-left: auto;
+  margin-right: auto;
   left: 400px;
+}
+
+.instruct-text{
+  text-align: left;
 }
 .scoreboard{
   position: relative;
@@ -43,6 +48,22 @@
 .selected{
   color: rgb(32, 197, 249);
 }
+
+.feedback{
+  text-align: center;
+  font-size: 90px;
+  color: white;
+  position: relative;
+  bottom: 400px;
+}
+
+.green{
+  color: #38eb4f;
+}
+
+.red {
+  color: #d93434;
+}
 .songs-index{
   text-align: center;
   position: relative;
@@ -50,15 +71,7 @@
   top: 50px;
   color: white;
 }
-.v{
-  position: relative;
-  bottom: 150px;
-}
 
-.d{
-  position: relative;
-  bottom: 75px;
-}
 .game-layer {
   position: fixed;
   top: 0;

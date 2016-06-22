@@ -10,7 +10,9 @@ module.exports = React.createClass({
         startTime: 0,
         videoTime: 0,
         localTime: 0,
+        score: 0,
         currentBeat: 0,
+        beats: [],
         readyBeats: [],
         score: 0,
         playing: false,
@@ -28,7 +30,7 @@ module.exports = React.createClass({
   },
 
   saveSongData: function (song) {
-  this.beats = song.beats;
+  this.setState({beats: song.beats});
   this.songId = song.id;
   this.youtubeId = song.youtube_id;
   this.enableIframeApi();
@@ -39,16 +41,18 @@ keyDownHandler: function (e) {
   e.stopPropagation();
   e.preventDefault();
   if (e.which === 32) {
-    if (this.player().getPlayerState && this.player().getPlayerState() !== 1) {
       this.togglePlay();
-    }
   } else if (e.which >= 65 || e.which <= 90) {
-    var hitTime = window.Date.now() - this.state.startTime;
-    this.beats.forEach( function (beat){
-      if ((hitTime < beat.time + 100 && hitTime > beat.time - 100) && (beat.key === e.key)){
-        console.log("HIT BASS");
+    var hitTime = this.state.localTime;
+      var i = this.state.currentBeat;
+      var score = this.state.score
+      if ((hitTime < this.state.beats[i].time + .1 && hitTime > this.state.beats[i].time - .1) && (this.state.beats[i].key === e.key)){
+        this.setState({ score: score + 10 })
+        return
+      } else {
+        this.setState({ score: score - 5 })
       }
-    });
+
   }
 },
 
@@ -56,7 +60,8 @@ togglePlay: function () {
   if (this.player().getPlayerState && this.player().getPlayerState() !== 1) {
     this.player().playVideo();
     this.intervalVar = setInterval(this.playerTimeInterval, 10);
-    this.setState({ playing: true, localTime: this.state.ytTime });
+
+    this.setState({ playing: true, localTime: this.state.videoTime });
   } else {
     this.player().pauseVideo();
     clearInterval(this.intervalVar);
@@ -77,7 +82,7 @@ playerTimeInterval: function () {
 },
 
 incrementBeat: function () {
-  if (this.beats[this.state.currentBeat + 1].time < this.state.localTime + 0.15) {
+  if (this.state.beats[this.state.currentBeat + 1].time < this.state.localTime + 0.15) {
     var currentBeat = this.state.currentBeat + 1;
     this.setState({
       currentBeat: currentBeat
@@ -87,81 +92,28 @@ incrementBeat: function () {
 },
 
 renderOneBeat: function (i) {
-  if (this.beats[i]) {
+  if (this.state.beats[i]) {
    return (<Beat
-      letter={this.beats ? this.beats[i].letter : null}
-      key={i + this.beats[i].letter}
-      score={this.beats[i].score}
-    />);
-  } else {
-    return (<Beat
-      letter={null}
-      key={i}
+      letter={this.state.beats[i].key}
+      key={this.state.beats[i].id}
     />);
   }
 },
 
 renderBeats: function () {
-  if (!this.beats) { return null } 
+  if (!this.state.beats) { return null }
   if (!this.state.playing) {
-    return this.renderPauseMessage();
   }
-
   var currentBeat = this.state.currentBeat;
   var beatArr = [];
-  for (var i = (currentBeat - 10 > 0 ? currentBeat - 10 : 0); i < this.beats.length && i < currentBeat + 10; i++) {
-    // to display, beat must be within 1.7s of localTime AND at time after last video pause
-    if (Math.abs(this.beats[i].time - this.state.localTime) < 1.3 && this.beats[i].time > this.state.lastStop + 1.0) {
+  for (var i = 0; i < this.state.beats.length; i++) {
+
+    if (Math.abs(this.state.beats[i].time - this.state.localTime) < 1.3 && this.state.beats[i].time > this.state.lastStop + 1.0) {
       beatArr.push(this.renderOneBeat(i));
     }
   }
 
   return beatArr;
-},
-
-getBeats: function () {
-  var that = this;
-
-  var i = 0
-  var newBeats = [];
-  showBeats = function () {
-    timeNow = window.Date.now();
-
-    if ((timeNow - that.state.startTime + 1000 <= that.beats[i].time) && (timeNow - that.state.startTime + 2000 >= that.beats[i].time)){
-      newBeats.push(that.beats[i]);
-      i += 1;
-    }
-    that.setState({ readyBeats: newBeats });
-    setTimeout(showBeats, 1)
-  }
-
-  showBeats();
-},
-
-displayBeats: function () {
-  var displayedBeats = [];
-  if (this.state.readyBeats) {
-    this.state.readyBeats.forEach(function(beat){
-
-      displayedBeats.push(this.renderBeat(beat))
-    }.bind(this));
-  }
-
-  // for (var i = this.state.readyBeats.length-1; i < this.state.readyBeats.length; i++) {
-  //   displayedBeats.push(this.renderBeat(his.state.readyBeats[i]));
-  //
-  // }
-
-  return displayedBeats;
-},
-
-renderBeat: function (beat) {
-  if (beat) {
-
-    return(<Beat letter={beat.key}/>);
-  } else {
-    return (<div></div>);
-  }
 },
 
   enableIframeApi: function () {
@@ -207,6 +159,10 @@ renderBeat: function (beat) {
           <ul className="group beat-letters">
             {this.renderBeats()}
           </ul>
+          <section className="scoreboard">
+            <h1>SCORE</h1>
+            <h2>{this.state.score}</h2>
+          </section>
 
         </div>
         <container className="song-container" id="song-container">

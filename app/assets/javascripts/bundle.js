@@ -26132,7 +26132,9 @@
 	      startTime: 0,
 	      videoTime: 0,
 	      localTime: 0,
+	      score: 0,
 	      currentBeat: 0,
+	      beats: [],
 	      readyBeats: [],
 	      score: 0,
 	      playing: false,
@@ -26150,7 +26152,7 @@
 	  },
 	
 	  saveSongData: function (song) {
-	    this.beats = song.beats;
+	    this.setState({ beats: song.beats });
 	    this.songId = song.id;
 	    this.youtubeId = song.youtube_id;
 	    this.enableIframeApi();
@@ -26160,16 +26162,17 @@
 	    e.stopPropagation();
 	    e.preventDefault();
 	    if (e.which === 32) {
-	      if (this.player().getPlayerState && this.player().getPlayerState() !== 1) {
-	        this.togglePlay();
-	      }
+	      this.togglePlay();
 	    } else if (e.which >= 65 || e.which <= 90) {
-	      var hitTime = window.Date.now() - this.state.startTime;
-	      this.beats.forEach(function (beat) {
-	        if (hitTime < beat.time + 100 && hitTime > beat.time - 100 && beat.key === e.key) {
-	          console.log("HIT BASS");
-	        }
-	      });
+	      var hitTime = this.state.localTime;
+	      var i = this.state.currentBeat;
+	      var score = this.state.score;
+	      if (hitTime < this.state.beats[i].time + .1 && hitTime > this.state.beats[i].time - .1 && this.state.beats[i].key === e.key) {
+	        this.setState({ score: score + 10 });
+	        return;
+	      } else {
+	        this.setState({ score: score - 5 });
+	      }
 	    }
 	  },
 	
@@ -26177,7 +26180,8 @@
 	    if (this.player().getPlayerState && this.player().getPlayerState() !== 1) {
 	      this.player().playVideo();
 	      this.intervalVar = setInterval(this.playerTimeInterval, 10);
-	      this.setState({ playing: true, localTime: this.state.ytTime });
+	
+	      this.setState({ playing: true, localTime: this.state.videoTime });
 	    } else {
 	      this.player().pauseVideo();
 	      clearInterval(this.intervalVar);
@@ -26200,7 +26204,7 @@
 	  },
 	
 	  incrementBeat: function () {
-	    if (this.beats[this.state.currentBeat + 1].time < this.state.localTime + 0.15) {
+	    if (this.state.beats[this.state.currentBeat + 1].time < this.state.localTime + 0.15) {
 	      var currentBeat = this.state.currentBeat + 1;
 	      this.setState({
 	        currentBeat: currentBeat
@@ -26209,83 +26213,29 @@
 	  },
 	
 	  renderOneBeat: function (i) {
-	    if (this.beats[i]) {
+	    if (this.state.beats[i]) {
 	      return React.createElement(Beat, {
-	        letter: this.beats ? this.beats[i].letter : null,
-	        key: i + this.beats[i].letter,
-	        score: this.beats[i].score
-	      });
-	    } else {
-	      return React.createElement(Beat, {
-	        letter: null,
-	        key: i
+	        letter: this.state.beats[i].key,
+	        key: this.state.beats[i].id
 	      });
 	    }
 	  },
 	
 	  renderBeats: function () {
-	    if (!this.beats) {
+	    if (!this.state.beats) {
 	      return null;
 	    }
-	    if (!this.state.playing) {
-	      return this.renderPauseMessage();
-	    }
-	
+	    if (!this.state.playing) {}
 	    var currentBeat = this.state.currentBeat;
 	    var beatArr = [];
-	    for (var i = currentBeat - 10 > 0 ? currentBeat - 10 : 0; i < this.beats.length && i < currentBeat + 10; i++) {
-	      // to display, beat must be within 1.7s of localTime AND at time after last video pause
-	      if (Math.abs(this.beats[i].time - this.state.localTime) < 1.3 && this.beats[i].time > this.state.lastStop + 1.0) {
+	    for (var i = 0; i < this.state.beats.length; i++) {
+	
+	      if (Math.abs(this.state.beats[i].time - this.state.localTime) < 1.3 && this.state.beats[i].time > this.state.lastStop + 1.0) {
 	        beatArr.push(this.renderOneBeat(i));
 	      }
 	    }
 	
 	    return beatArr;
-	  },
-	
-	  getBeats: function () {
-	    var that = this;
-	
-	    var i = 0;
-	    var newBeats = [];
-	    showBeats = function () {
-	      timeNow = window.Date.now();
-	
-	      if (timeNow - that.state.startTime + 1000 <= that.beats[i].time && timeNow - that.state.startTime + 2000 >= that.beats[i].time) {
-	        newBeats.push(that.beats[i]);
-	        i += 1;
-	      }
-	      that.setState({ readyBeats: newBeats });
-	      setTimeout(showBeats, 1);
-	    };
-	
-	    showBeats();
-	  },
-	
-	  displayBeats: function () {
-	    var displayedBeats = [];
-	    if (this.state.readyBeats) {
-	      this.state.readyBeats.forEach(function (beat) {
-	
-	        displayedBeats.push(this.renderBeat(beat));
-	      }.bind(this));
-	    }
-	
-	    // for (var i = this.state.readyBeats.length-1; i < this.state.readyBeats.length; i++) {
-	    //   displayedBeats.push(this.renderBeat(his.state.readyBeats[i]));
-	    //
-	    // }
-	
-	    return displayedBeats;
-	  },
-	
-	  renderBeat: function (beat) {
-	    if (beat) {
-	
-	      return React.createElement(Beat, { letter: beat.key });
-	    } else {
-	      return React.createElement('div', null);
-	    }
 	  },
 	
 	  enableIframeApi: function () {
@@ -26335,6 +26285,20 @@
 	          'ul',
 	          { className: 'group beat-letters' },
 	          this.renderBeats()
+	        ),
+	        React.createElement(
+	          'section',
+	          { className: 'scoreboard' },
+	          React.createElement(
+	            'h1',
+	            null,
+	            'SCORE'
+	          ),
+	          React.createElement(
+	            'h2',
+	            null,
+	            this.state.score
+	          )
 	        )
 	      ),
 	      React.createElement('container', { className: 'song-container', id: 'song-container' })
@@ -36055,7 +36019,7 @@
 	  getInitialState: function () {
 	    return {
 	      localTime: 0,
-	      ytTime: 0,
+	      videoTime: 0,
 	      nextBeat: 0
 	    };
 	  },
@@ -36073,25 +36037,37 @@
 	    e.stopPropagation();
 	    e.preventDefault();
 	    if (e.which === 32) {
-	      if (this.getPlayer().getPlayerState && this.getPlayer().getPlayerState() !== 1) {
-	        this.getPlayer().playVideo();
-	        this.startTime = window.Date.now();
+	      if (this.player().getPlayerState && this.player().getPlayerState() !== 1) {
+	        this.togglePlay();
 	      } else {
-	        this.getPlayer().pauseVideo();
+	        this.player().pauseVideo();
 	      }
 	    } else if (e.which >= 65 || e.which <= 90) {
-	      var beatTime = window.Date.now() - this.startTime;
+	      var beatTime = this.state.localTime;
 	      var data = { time: beatTime, song_id: 1, key: e.key.toString() };
 	      SongsApiUtil.createBeat(data);
 	    }
 	  },
 	
+	  togglePlay: function () {
+	    if (this.player().getPlayerState && this.player().getPlayerState() !== 1) {
+	      this.player().playVideo();
+	      this.intervalVar = setInterval(this.playerTimeInterval, 10);
+	
+	      this.setState({ playing: true, localTime: this.state.videoTime });
+	    } else {
+	      this.player().pauseVideo();
+	      clearInterval(this.intervalVar);
+	      this.setState({ playing: false, lastStop: this.state.localTime });
+	    }
+	  },
+	
 	  playerTimeInterval: function () {
-	    var ytTime = this.getPlayer().getCurrentTime();
-	    if (ytTime === this.state.ytTime) {
+	    var videoTime = this.player().getCurrentTime();
+	    if (videoTime === this.state.videoTime) {
 	      this.setState({ localTime: this.state.localTime + .010 });
 	    } else {
-	      this.setState({ localTime: ytTime, ytTime: ytTime });
+	      this.setState({ localTime: videoTime, videoTime: videoTime });
 	    }
 	  },
 	
@@ -36116,7 +36092,7 @@
 	    };
 	    onYouTubeIframeAPIReady();
 	
-	    this.getPlayer = function () {
+	    this.player = function () {
 	      return player;
 	    };
 	  },

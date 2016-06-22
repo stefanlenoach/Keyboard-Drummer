@@ -6,19 +6,48 @@
   right: 0;
 }
 .menu{
+  text-align: center;
+  font-size: 20px;
   color: white;
+  position: relative;
+  top: 200px;
+}
+.menu h1{
+  font-size: 50px;
+  font-weight: lighter;
+  color: rgb(32, 197, 249);
 }
 
+.songs-index h1{
+  color: rgb(32, 197, 249);
+  font-size: 30px;
+}
+
+.instructions{
+  font-weight: 100;
+  font-size: 20px;
+  text-align: left;
+  position: relative;
+  left: 400px;
+}
 .scoreboard{
   position: relative;
   top: 50px;
   color: white;
 }
-
+.songs{
+  padding: 10px;
+  margin-bottom: 20px;
+  font-size: 30px;
+}
 .selected{
-  background: #bbb;
+  color: rgb(32, 197, 249);
 }
 .songs-index{
+  text-align: center;
+  position: relative;
+  font-size: 20px;
+  top: 50px;
   color: white;
 }
 .v{

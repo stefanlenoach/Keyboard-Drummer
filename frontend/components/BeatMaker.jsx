@@ -25,22 +25,21 @@ module.exports = React.createClass({
     e.preventDefault();
     if (e.which === 32) {
       if (this.player().getPlayerState && this.player().getPlayerState() !== 1) {
-        this.togglePlay();
+        this.play();
       } else {
         this.player().pauseVideo();
       }
     } else if (e.which >= 65 || e.which <= 90) {
       var beatTime = this.state.localTime;
-      var data = { time: beatTime, song_id: 1, key: e.key.toString() };
+      var data = { time: beatTime, song_id: 2, key: e.key.toString() };
       SongsApiUtil.createBeat(data);
     }
   },
 
-  togglePlay: function () {
+  play: function () {
     if (this.player().getPlayerState && this.player().getPlayerState() !== 1) {
       this.player().playVideo();
       this.intervalVar = setInterval(this.playerTimeInterval, 10);
-
       this.setState({ playing: true, localTime: this.state.videoTime });
     } else {
       this.player().pauseVideo();
@@ -73,7 +72,7 @@ module.exports = React.createClass({
         left: 0,
         width: '100%',
         height: '100%',
-        videoId: '0J2QdDbelmY',
+        videoId: 'CD-E-LDc384',
         wmode: "transparent"
       });
     }

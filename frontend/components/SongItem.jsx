@@ -41,7 +41,7 @@ keyDownHandler: function (e) {
   e.stopPropagation();
   e.preventDefault();
   if (e.which === 32) {
-      this.togglePlay();
+      this.play();
   } else if (e.which >= 65 || e.which <= 90) {
     var hitTime = this.state.localTime;
       var i = this.state.currentBeat;
@@ -56,7 +56,7 @@ keyDownHandler: function (e) {
   }
 },
 
-togglePlay: function () {
+play: function () {
   if (this.player().getPlayerState && this.player().getPlayerState() !== 1) {
     this.player().playVideo();
     this.intervalVar = setInterval(this.playerTimeInterval, 10);

@@ -25910,7 +25910,12 @@
 	    return React.createElement(
 	      'div',
 	      { className: 'menu' },
-	      'Keyboard Drummer ',
+	      React.createElement(
+	        'h1',
+	        null,
+	        'Keyboard Drummer'
+	      ),
+	      ' ',
 	      React.createElement('br', null),
 	      ' Press Space'
 	    );
@@ -26000,6 +26005,39 @@
 	    return React.createElement(
 	      'div',
 	      { className: 'songs-index' },
+	      React.createElement(
+	        'h1',
+	        null,
+	        'Welcome to Keyboard Drummer!'
+	      ),
+	      React.createElement('br', null),
+	      React.createElement(
+	        'div',
+	        { className: 'instructions' },
+	        React.createElement(
+	          'p',
+	          null,
+	          '1. Choose a song from the list below and press Enter.'
+	        ),
+	        React.createElement(
+	          'p',
+	          null,
+	          '2. Press Space to start the game.'
+	        ),
+	        React.createElement(
+	          'p',
+	          null,
+	          '3. Try to hit the proper keys as they reach the center of the screen.'
+	        ),
+	        React.createElement(
+	          'p',
+	          null,
+	          '4. Have fun!'
+	        ),
+	        React.createElement('br', null)
+	      ),
+	      React.createElement('br', null),
+	      React.createElement('br', null),
 	      React.createElement(
 	        'h2',
 	        null,
@@ -26162,7 +26200,7 @@
 	    e.stopPropagation();
 	    e.preventDefault();
 	    if (e.which === 32) {
-	      this.togglePlay();
+	      this.play();
 	    } else if (e.which >= 65 || e.which <= 90) {
 	      var hitTime = this.state.localTime;
 	      var i = this.state.currentBeat;
@@ -26176,7 +26214,7 @@
 	    }
 	  },
 	
-	  togglePlay: function () {
+	  play: function () {
 	    if (this.player().getPlayerState && this.player().getPlayerState() !== 1) {
 	      this.player().playVideo();
 	      this.intervalVar = setInterval(this.playerTimeInterval, 10);
@@ -36034,22 +36072,21 @@
 	    e.preventDefault();
 	    if (e.which === 32) {
 	      if (this.player().getPlayerState && this.player().getPlayerState() !== 1) {
-	        this.togglePlay();
+	        this.play();
 	      } else {
 	        this.player().pauseVideo();
 	      }
 	    } else if (e.which >= 65 || e.which <= 90) {
 	      var beatTime = this.state.localTime;
-	      var data = { time: beatTime, song_id: 1, key: e.key.toString() };
+	      var data = { time: beatTime, song_id: 2, key: e.key.toString() };
 	      SongsApiUtil.createBeat(data);
 	    }
 	  },
 	
-	  togglePlay: function () {
+	  play: function () {
 	    if (this.player().getPlayerState && this.player().getPlayerState() !== 1) {
 	      this.player().playVideo();
 	      this.intervalVar = setInterval(this.playerTimeInterval, 10);
-	
 	      this.setState({ playing: true, localTime: this.state.videoTime });
 	    } else {
 	      this.player().pauseVideo();
@@ -36082,7 +36119,7 @@
 	        left: 0,
 	        width: '100%',
 	        height: '100%',
-	        videoId: '0J2QdDbelmY',
+	        videoId: 'CD-E-LDc384',
 	        wmode: "transparent"
 	      });
 	    };

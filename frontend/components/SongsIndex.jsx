@@ -73,6 +73,13 @@ module.exports = React.createClass({
   render: function () {
     return (
       <div className="songs-index">
+        <h1>Welcome to Keyboard Drummer!</h1><br></br>
+        <div className='instructions'>
+          <p>1. Choose a song from the list below and press Enter.</p>
+          <p>2. Press Space to start the game.</p>
+          <p>3. Try to hit the proper keys as they reach the center of the screen.</p>
+          <p>4. Have fun!</p><br></br>
+        </div><br></br><br></br>
         <h2>Songs:</h2>
 
         <div className="songs">
@@ -81,6 +88,7 @@ module.exports = React.createClass({
           </ul>
         </div>
         Press Enter
+
       </div>
     )
   }

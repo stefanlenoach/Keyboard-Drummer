@@ -38,7 +38,23 @@
 .scoreboard{
   position: relative;
   top: 50px;
+  font-size: 30px;
+
+  margin-left: auto;
+  margin-right: auto;
   color: white;
+  text-align: left;
+}
+.score-items{
+  width:900px;
+  position:relative;
+  margin-left: auto;
+  margin-right: auto;
+}
+.scoreboard h1{
+  padding: 10px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .songs{
   padding: 10px;

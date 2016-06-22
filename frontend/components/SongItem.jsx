@@ -184,10 +184,12 @@ multiplier: function () {
             {this.displayBeats()}
           </ul>
           <section className="scoreboard">
-            <h1>SCORE: {this.state.score}</h1>
-            <h1>MULTIPLIER: {this.state.multiplier}</h1>
-            <h1>STREAK: {this.state.multCount}</h1>
-            <div className='feedback'>{this.onBeat()}</div>
+            <div className='score-items'>
+              <h1>SCORE: {this.state.score}</h1>
+              <h1>MULTIPLIER: {this.state.multiplier}</h1>
+              <h1>STREAK: {this.state.multCount}</h1>
+              <div className='feedback'>{this.onBeat()}</div>
+            </div>
           </section>
 
         </div>

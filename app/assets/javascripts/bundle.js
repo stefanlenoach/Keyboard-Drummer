@@ -26365,27 +26365,31 @@
 	          'section',
 	          { className: 'scoreboard' },
 	          React.createElement(
-	            'h1',
-	            null,
-	            'SCORE: ',
-	            this.state.score
-	          ),
-	          React.createElement(
-	            'h1',
-	            null,
-	            'MULTIPLIER: ',
-	            this.state.multiplier
-	          ),
-	          React.createElement(
-	            'h1',
-	            null,
-	            'STREAK: ',
-	            this.state.multCount
-	          ),
-	          React.createElement(
 	            'div',
-	            { className: 'feedback' },
-	            this.onBeat()
+	            { className: 'score-items' },
+	            React.createElement(
+	              'h1',
+	              null,
+	              'SCORE: ',
+	              this.state.score
+	            ),
+	            React.createElement(
+	              'h1',
+	              null,
+	              'MULTIPLIER: ',
+	              this.state.multiplier
+	            ),
+	            React.createElement(
+	              'h1',
+	              null,
+	              'STREAK: ',
+	              this.state.multCount
+	            ),
+	            React.createElement(
+	              'div',
+	              { className: 'feedback' },
+	              this.onBeat()
+	            )
 	          )
 	        )
 	      ),

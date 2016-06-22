@@ -44,7 +44,15 @@ keyDownHandler: function (e) {
   e.stopPropagation();
   e.preventDefault();
   if (e.which === 32) {
-      this.play();
+    if (this.player().getPlayerState && this.player().getPlayerState() !== 1) {
+      this.player().playVideo();
+      this.intervalVar = setInterval(this.playerTimeInterval, 10);
+      this.setState({ playing: true, localTime: this.state.videoTime });
+    } else {
+      this.player().pauseVideo();
+      clearInterval(this.intervalVar);
+      this.setState({ playing: false, lastStop: this.state.localTime });
+    }
   } else if (e.which >= 65 || e.which <= 90) {
     var hitTime = this.state.localTime;
       var i = this.state.currentBeat;
@@ -59,19 +67,6 @@ keyDownHandler: function (e) {
         this.setState({ score: score - 20, noteState: "red", multCount: 0, multiplier: 1})
       }
 
-  }
-},
-
-play: function () {
-  if (this.player().getPlayerState && this.player().getPlayerState() !== 1) {
-    this.player().playVideo();
-    this.intervalVar = setInterval(this.playerTimeInterval, 10);
-
-    this.setState({ playing: true, localTime: this.state.videoTime });
-  } else {
-    this.player().pauseVideo();
-    clearInterval(this.intervalVar);
-    this.setState({ playing: false, lastStop: this.state.localTime });
   }
 },
 

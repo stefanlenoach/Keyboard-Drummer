@@ -26207,7 +26207,15 @@
 	    e.stopPropagation();
 	    e.preventDefault();
 	    if (e.which === 32) {
-	      this.play();
+	      if (this.player().getPlayerState && this.player().getPlayerState() !== 1) {
+	        this.player().playVideo();
+	        this.intervalVar = setInterval(this.playerTimeInterval, 10);
+	        this.setState({ playing: true, localTime: this.state.videoTime });
+	      } else {
+	        this.player().pauseVideo();
+	        clearInterval(this.intervalVar);
+	        this.setState({ playing: false, lastStop: this.state.localTime });
+	      }
 	    } else if (e.which >= 65 || e.which <= 90) {
 	      var hitTime = this.state.localTime;
 	      var i = this.state.currentBeat;
@@ -26221,19 +26229,6 @@
 	      } else {
 	        this.setState({ score: score - 20, noteState: "red", multCount: 0, multiplier: 1 });
 	      }
-	    }
-	  },
-	
-	  play: function () {
-	    if (this.player().getPlayerState && this.player().getPlayerState() !== 1) {
-	      this.player().playVideo();
-	      this.intervalVar = setInterval(this.playerTimeInterval, 10);
-	
-	      this.setState({ playing: true, localTime: this.state.videoTime });
-	    } else {
-	      this.player().pauseVideo();
-	      clearInterval(this.intervalVar);
-	      this.setState({ playing: false, lastStop: this.state.localTime });
 	    }
 	  },
 	
@@ -26437,7 +26432,7 @@
 	      }
 	    } else if (e.which >= 65 || e.which <= 90) {
 	      var beatTime = this.state.localTime;
-	      var data = { time: beatTime, song_id: 6, key: e.key.toString() };
+	      var data = { time: beatTime, song_id: 7, key: e.key.toString() };
 	      SongsApiUtil.createBeat(data);
 	    }
 	  },
@@ -26478,7 +26473,7 @@
 	        left: 0,
 	        width: '100%',
 	        height: '100%',
-	        videoId: 'ojC0mg2hJCc',
+	        videoId: 'OIRE6iw-ws4',
 	        wmode: "transparent"
 	      });
 	    };

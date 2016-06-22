@@ -26433,7 +26433,7 @@
 	      }
 	    } else if (e.which >= 65 || e.which <= 90) {
 	      var beatTime = this.state.localTime;
-	      var data = { time: beatTime, song_id: 2, key: e.key.toString() };
+	      var data = { time: beatTime, song_id: 6, key: e.key.toString() };
 	      SongsApiUtil.createBeat(data);
 	    }
 	  },
@@ -26474,7 +26474,7 @@
 	        left: 0,
 	        width: '100%',
 	        height: '100%',
-	        videoId: 'CD-E-LDc384',
+	        videoId: 'ojC0mg2hJCc',
 	        wmode: "transparent"
 	      });
 	    };

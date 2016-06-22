@@ -50,7 +50,7 @@ keyDownHandler: function (e) {
         this.setState({ score: score + 10 })
         return
       } else {
-        this.setState({ score: score - 5 })
+        this.setState({ score: score - 20 })
       }
 
   }
@@ -160,8 +160,8 @@ renderBeats: function () {
             {this.renderBeats()}
           </ul>
           <section className="scoreboard">
-            <h1>SCORE</h1>
-            <h2>{this.state.score}</h2>
+            <h1>SCORE: {this.state.score}</h1>
+
           </section>
 
         </div>

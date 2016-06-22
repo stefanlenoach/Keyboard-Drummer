@@ -9,6 +9,12 @@
   color: white;
 }
 
+.scoreboard{
+  position: relative;
+  top: 50px;
+  color: white;
+}
+
 .selected{
   background: #bbb;
 }

@@ -26171,7 +26171,7 @@
 	        this.setState({ score: score + 10 });
 	        return;
 	      } else {
-	        this.setState({ score: score - 5 });
+	        this.setState({ score: score - 20 });
 	      }
 	    }
 	  },
@@ -26292,11 +26292,7 @@
 	          React.createElement(
 	            'h1',
 	            null,
-	            'SCORE'
-	          ),
-	          React.createElement(
-	            'h2',
-	            null,
+	            'SCORE: ',
 	            this.state.score
 	          )
 	        )

@@ -5,7 +5,7 @@ Tap keys in time to the beat and see how high you can score!
 
 ###Game View:
 
-![welcome](./docs/image/gameplay.png)
+![welcome](./docs/images/gameplay.png)
 
 ##Technical Details
 Keyboard Drummer was built using JavaScript and React.js for the bulk of the front end components and Ruby on Rails for the backend. The database consists of two tables: Songs and Beats. Songs contain a song name and YouTube video id. Beats contain a song id, key value, and time.

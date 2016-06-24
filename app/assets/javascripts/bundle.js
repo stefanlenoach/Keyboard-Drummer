@@ -26232,7 +26232,15 @@
 	    }
 	  },
 	
+	  contextTypes: {
+	    router: React.PropTypes.object.isRequired
+	  },
+	
 	  playerTimeInterval: function () {
+	    if (this.player().getPlayerState() === 0) {
+	      clearInterval(this.intervalVar);
+	      this.context.router.push("/songs");
+	    }
 	    if (this.player().getPlayerState() !== 1) {
 	      return;
 	    }
@@ -26243,10 +26251,10 @@
 	    } else {
 	      this.setState({ localTime: videoTime, videoTime: videoTime });
 	    }
-	    this.incrementBeat();
+	    this.nextBeat();
 	  },
 	
-	  incrementBeat: function () {
+	  nextBeat: function () {
 	    if (this.state.beats[this.state.currentBeat + 1].time < this.state.localTime + 0.15) {
 	      var currentBeat = this.state.currentBeat + 1;
 	      this.setState({
@@ -26311,10 +26319,10 @@
 	          'autoplay': 0,
 	          'controls': 0,
 	          modestBranding: 1,
-	          showinfo: 0,
-	          fs: 0,
 	          disablekb: 0,
+	          showinfo: 0,
 	          rel: 0,
+	          fs: 0,
 	          iv_load_policy: 3
 	        }
 	      });
@@ -26353,7 +26361,7 @@
 	        { className: 'game-layer', id: 'game-layer' },
 	        React.createElement(
 	          'ul',
-	          { className: 'group beat-letters' },
+	          { className: 'group beats' },
 	          this.displayBeats()
 	        ),
 	        React.createElement(

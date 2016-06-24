@@ -99,7 +99,7 @@
   background: rgba(0, 0, 0, .6);
 }
 
-.game-layer .beat-letters {
+.game-layer .beats {
   margin-top: 20%;
   display: inline-block;
   font-weight: 200;
@@ -110,7 +110,7 @@
   position: relative;
 }
 
-.beat-letters li {
+.beats li {
   font-size: 40px;
   line-height: 112px;
   text-align: center;
@@ -136,26 +136,7 @@
   95%  { opacity: 1.0; }
   100% { right: 90%; opacity: 0.0; }
 }
-@-moz-keyframes letter-slide {
-  0%   { right: 0; opacity: 0.0;}
-  5%   { opacity: 1.0; }
-  48%  { color: #ccc; font-size: 56px; }
-  50%  { color: #0de0fc; font-size: 70px; }
-  59%  { color: #0de0fc; font-size: 70px; }
-  62%  { color: #ccc; font-size: 56px; }
-  95%  { opacity: 1.0; }
-  100% { right: 90%; opacity: 0.0; }
-}
-@-o-keyframes letter-slide {
- 0%   { right: 0; opacity: 0.0;}
- 5%   { opacity: 1.0; }
- 48%  { color: #ccc; font-size: 56px; }
- 50%  { color: #0de0fc; font-size: 70px; }
- 59%  { color: #0de0fc; font-size: 70px; }
- 62%  { color: #ccc; font-size: 56px; }
- 95%  { opacity: 1.0; }
- 100% { right: 90%; opacity: 0.0; }
-}
+
 @keyframes letter-slide {
   0%   { right: 0; opacity: 0.0;}
   5%   { opacity: 1.0; }

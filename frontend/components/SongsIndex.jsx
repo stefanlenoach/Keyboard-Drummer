@@ -1,6 +1,5 @@
 var React = require('react')
 var SongsApiUtil = require('../util/songs_api_util');
-var YoutubeApiUtil = require('../util/youtube_api_util')
 
 module.exports = React.createClass({
 
@@ -11,7 +10,6 @@ module.exports = React.createClass({
   componentDidMount: function () {
     $(document.body).on('keydown', this.onKeyDown);
     SongsApiUtil.getSongs(this.setSongs);
-    YoutubeApiUtil.loadIframePlayer();
   },
 
   componentWillUnmount: function () {

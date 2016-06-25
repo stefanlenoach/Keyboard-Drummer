@@ -25928,7 +25928,6 @@
 
 	var React = __webpack_require__(1);
 	var SongsApiUtil = __webpack_require__(231);
-	var YoutubeApiUtil = __webpack_require__(232);
 	
 	module.exports = React.createClass({
 	  displayName: 'exports',
@@ -25941,7 +25940,6 @@
 	  componentDidMount: function () {
 	    $(document.body).on('keydown', this.onKeyDown);
 	    SongsApiUtil.getSongs(this.setSongs);
-	    YoutubeApiUtil.loadIframePlayer();
 	  },
 	
 	  componentWillUnmount: function () {

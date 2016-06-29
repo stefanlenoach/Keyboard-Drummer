@@ -1,12 +1,12 @@
 var React = require('react')
 var SongsIndex = require('./SongsIndex');
-var YoutubeApiUtil = require('../util/youtube_api_util');
+
 
 module.exports = React.createClass({
 
   componentDidMount: function () {
     $(document.body).on('keydown', this.onChange);
-    YoutubeApiUtil.loadIframePlayer();
+    
   },
 
   componentWillUnmount: function () {

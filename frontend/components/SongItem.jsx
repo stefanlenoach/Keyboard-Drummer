@@ -1,7 +1,6 @@
 var React = require('react')
 var SongsApiUtil = require('../util/songs_api_util')
 var YouTubePlayer = require('youtube-player')
-var YoutubeApiUtil = require('../util/youtube_api_util')
 var Beat = require('./Beat');
 module.exports = React.createClass({
 
@@ -37,6 +36,14 @@ module.exports = React.createClass({
   this.songId = song.id;
   this.youtubeId = song.youtube_id;
   this.enableIframeApi();
+},
+
+pauseMessage: function(){
+  if (this.state.playing === false){
+    return (<div className="pause">Press Space to Start</div>);
+  } else {
+    return (<div></div>);
+  }
 },
 
 
@@ -138,7 +145,7 @@ multiplier: function () {
     tag.src = "https://www.youtube.com/iframe_api";
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
+    debugger
     var player;
     var youtubeId = this.youtubeId;
     onYouTubeIframeAPIReady = function () {
@@ -186,6 +193,7 @@ multiplier: function () {
           <ul className="group beats">
             {this.displayBeats()}
           </ul>
+            {this.pauseMessage()}
           <section className="scoreboard">
             <div className='score-items'>
               <h1>SCORE: {this.state.score}</h1>

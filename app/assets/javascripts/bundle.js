@@ -25991,7 +25991,8 @@
 	          'div',
 	          null,
 	          song.name
-	        )
+	        ),
+	        React.createElement('br', null)
 	      ));
 	    });
 	    return arr;
@@ -26018,16 +26019,19 @@
 	            null,
 	            '1. Choose a song from the list below and press Enter.'
 	          ),
+	          React.createElement('br', null),
 	          React.createElement(
 	            'p',
 	            null,
 	            '2. Press Space to start the game.'
 	          ),
+	          React.createElement('br', null),
 	          React.createElement(
 	            'p',
 	            null,
-	            '3. Try to hit the proper keys as they reach the center of the screen.'
+	            '3. Hit the right keys as they reach center screen.'
 	          ),
+	          React.createElement('br', null),
 	          React.createElement(
 	            'p',
 	            null,
@@ -26051,8 +26055,7 @@
 	          null,
 	          this.allSongs()
 	        )
-	      ),
-	      'Press Enter'
+	      )
 	    );
 	  }
 	});

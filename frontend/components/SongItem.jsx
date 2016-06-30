@@ -145,7 +145,7 @@ multiplier: function () {
     tag.src = "https://www.youtube.com/iframe_api";
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-    debugger
+  
     var player;
     var youtubeId = this.youtubeId;
     onYouTubeIframeAPIReady = function () {

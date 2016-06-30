@@ -51,6 +51,12 @@
   margin-left: auto;
   margin-right: auto;
 }
+
+.pause{
+  position: absolute;
+  width: 100%;
+  text-align: center;
+}
 .scoreboard h1{
   padding: 10px;
   margin-left: auto;

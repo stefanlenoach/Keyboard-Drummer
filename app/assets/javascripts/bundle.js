@@ -26025,7 +26025,7 @@
 	          React.createElement(
 	            'p',
 	            null,
-	            '2. Press Space to start the game.'
+	            '2. Press Enter to start the game.'
 	          ),
 	          React.createElement('br', null),
 	          React.createElement(
@@ -26207,7 +26207,7 @@
 	      return React.createElement(
 	        'div',
 	        { className: 'pause' },
-	        'Press Space to Start'
+	        'Press Enter to Start'
 	      );
 	    } else {
 	      return React.createElement('div', null);
@@ -26217,7 +26217,7 @@
 	  keyDownHandler: function (e) {
 	    e.stopPropagation();
 	    e.preventDefault();
-	    if (e.which === 32) {
+	    if (e.which === 13) {
 	      if (this.player().getPlayerState && this.player().getPlayerState() !== 1) {
 	        this.player().playVideo();
 	        this.intervalVar = setInterval(this.playerTimeInterval, 10);

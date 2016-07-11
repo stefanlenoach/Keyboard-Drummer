@@ -40,7 +40,7 @@ module.exports = React.createClass({
 
 pauseMessage: function(){
   if (this.state.playing === false){
-    return (<div className="pause">Press Space to Start</div>);
+    return (<div className="pause">Press Enter to Start</div>);
   } else {
     return (<div></div>);
   }
@@ -50,7 +50,7 @@ pauseMessage: function(){
 keyDownHandler: function (e) {
   e.stopPropagation();
   e.preventDefault();
-  if (e.which === 32) {
+  if (e.which === 13) {
     if (this.player().getPlayerState && this.player().getPlayerState() !== 1) {
       this.player().playVideo();
       this.intervalVar = setInterval(this.playerTimeInterval, 10);
@@ -145,7 +145,7 @@ multiplier: function () {
     tag.src = "https://www.youtube.com/iframe_api";
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-  
+
     var player;
     var youtubeId = this.youtubeId;
     onYouTubeIframeAPIReady = function () {

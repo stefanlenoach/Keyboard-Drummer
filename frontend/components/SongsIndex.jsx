@@ -75,7 +75,7 @@ module.exports = React.createClass({
         <div className='instructions'>
           <div className='instruct-text'>
             <p>1. Choose a song from the list below and press Enter.</p><br/>
-            <p>2. Press Space to start the game.</p><br/>
+            <p>2. Press Enter to start the game.</p><br/>
             <p>3. Hit the right keys as they reach center screen.</p><br/>
             <p>4. Have fun!</p><br></br>
           </div>

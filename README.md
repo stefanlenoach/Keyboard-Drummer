@@ -2,7 +2,7 @@
 A rhythm game for the browser using JavaScript, Rails and React.js.
 Tap keys in time to the beat and see how high you can score!
 
-
+Live: http://keyboarddrummer.herokuapp.com/
 ###Game View:
 
 ![welcome](./docs/images/gameplay.png)

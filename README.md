@@ -27,6 +27,6 @@ On the front end, I built an internal timer to keep track of the time relative t
 ##Libraries and Technologies
 * PostgreSQL
 * YouTube IFrame API
-* React Router
+* React
 * Webpack
 * Heroku
